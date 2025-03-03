@@ -37,8 +37,6 @@ extension MainViewController {
             case .teamInfo:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
                 
-                // cell.configureCell()
-                
                 return cell
             case .memberCard:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
