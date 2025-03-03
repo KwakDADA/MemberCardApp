@@ -46,9 +46,20 @@ class MemberViewModel {
         }
     }
     
-    func editMember(widthId id: Int, name: String, imageURL: String, content: String){
+    func editMember(widthId id: Int, name: String? = nil, imageURL: String? = nil, content: String? = nil){
         if let index = members.firstIndex(where: {$0.id == id}){
-            members[index] = Member(id: id, name: name, imageURL: imageURL, content: content)
+            var member = members[index]
+
+            if let newName = name {
+                member.name = newName
+            }
+            if let newImageURL = imageURL {
+                member.imageURL = newImageURL
+            }
+            if let newContent = content {
+                member.content = newContent
+            }
+            members[index] = member
             repository.saveItems(members)
             onMembersUpdated?()
         }

@@ -8,8 +8,8 @@
 import Foundation
 
 struct Member {
-    let id: Int
-    let name: String
-    let imageURL: String
-    let content: String
+    var id: Int
+    var name: String
+    var imageURL: String
+    var content: String
 }
