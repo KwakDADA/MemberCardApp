@@ -9,70 +9,51 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    let memberVM = MemberViewModel()
-    let imagePickerViewModel = ImagePickerViewModel()
+    typealias DataSourceType = UICollectionViewDiffableDataSource<MainSection, MainItem>
     
-    let imageView = UIImageView()
+    private lazy var teamCollectionView: TeamCollectionView = .init()
+    private var dataSource: DataSourceType?
+    private var sections = [MainSection]()
     
-    let button = UIButton()
-    
-    let stackView = UIStackView()
-    
+    override func loadView() {
+        view = teamCollectionView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .orange
         
-        
-        memberVM.onMembersUpdated = { updatedMembers in
-            print(updatedMembers)
-        }
-        memberVM.fetchMembers()
-        
-        view.addSubview(stackView)
-        
-        stackView.addArrangedSubview(imageView)
-        stackView.addArrangedSubview(button)
-        
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.spacing = 20
-        stackView.distribution = .equalSpacing
-        
-        button.setTitle("click", for: .normal)
-        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        button.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        imageView.backgroundColor = .lightGray
-        
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            imageView.widthAnchor.constraint(equalToConstant: 200),
-            imageView.heightAnchor.constraint(equalToConstant: 200)
-        ])
-        
-        imagePickerViewModel.onImageUpload = { [weak self] imageURL in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                guard let imageURL = imageURL else {
-                    return
-                }
-                ImageLoader.shared.loadImage(from: imageURL) { image in
-                    self.imageView.image = image
-                }
-            }
-        }
+        configureDataSource()
     }
-    
-    @objc func didTapButton() {
-        imagePickerViewModel.presentImagePicker(from: self)
-    }
-    
 }
 
+// MARK: - DiffableDataSource
+extension MainViewController {
+    private func configureDataSource() {
+        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, itemIdentifier) -> UICollectionViewCell? in
+            
+            let sections = self.sections[indexPath.section]
+            
+            switch sections {
+            case .teamInfo:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
+                
+                // cell.configureCell()
+                
+                return cell
+            case .memberCard:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
+                
+                // cell.configureCell()
+                
+                return cell
+            }
+        })
+        
+        var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
+        initialSnapshot.appendSections([.teamInfo, .memberCard])
+        
+        sections = initialSnapshot.sectionIdentifiers
+        teamCollectionView.sections = sections
+        dataSource?.apply(initialSnapshot, animatingDifferences: true)
+    }
+}
