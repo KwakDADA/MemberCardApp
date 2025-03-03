@@ -29,9 +29,9 @@ class MemberViewModel {
         
         var updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
 
-        if var name = name { updateData.name = name }
-        if var imageURL = imageURL { updateData.imageURL = imageURL }
-        if var content = content { updateData.content = content }
+        if let name = name { updateData.name = name }
+        if let imageURL = imageURL { updateData.imageURL = imageURL }
+        if let content = content { updateData.content = content }
 
         await repository.updateMember(id: id, data: updateData)
     }

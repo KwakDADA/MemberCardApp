@@ -9,29 +9,63 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
+    let imagePickerViewModel = ImagePickerViewModel()
+    
     let imageView = UIImageView()
-
+    
+    let button = UIButton()
+    
+    let stackView = UIStackView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .orange
         
-        let imageURL = "https://picsum.photos/200/300"
         
-        ImageLoader.shared.loadImage(from: imageURL) { image in
-            self.imageView.image = image
-        }
+        view.addSubview(stackView)
         
-        view.addSubview(imageView)
+        stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(button)
+        
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        stackView.distribution = .equalSpacing
+        
+        button.setTitle("click", for: .normal)
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        button.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.backgroundColor = .lightGray
+        
         NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            imageView.widthAnchor.constraint(equalToConstant: 200),
+            imageView.heightAnchor.constraint(equalToConstant: 200)
         ])
         
-//        Task {
-//            let users = await viewModel.getMembers()
-//        }
+        imagePickerViewModel.onImageUpload = { [weak self] imageURL in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let imageURL = imageURL else {
+                    return
+                }
+                ImageLoader.shared.loadImage(from: imageURL) { image in
+                    self.imageView.image = image
+                }
+            }
+        }
+    }
+    
+    @objc func didTapButton() {
+        imagePickerViewModel.presentImagePicker(from: self)
     }
     
 }
