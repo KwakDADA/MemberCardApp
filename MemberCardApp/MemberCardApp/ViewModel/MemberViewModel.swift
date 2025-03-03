@@ -8,60 +8,36 @@
 import Foundation
 
 class MemberViewModel {
-    private let repository: UserDefaultsRepository
-    var onMembersUpdated: (() -> Void)?
     
-    private var members: [Member] = [] {
-        didSet {
-            onMembersUpdated?()
-        }
+    var onMembersUpdated: (()->Void)?
+    
+    private var users: [Member] = []
+    private let repository = MemberRepository()
+    
+    func getMembers() async -> [Member] {
+        let user = await repository.getMembers()
+        onMembersUpdated?()
+        return user
     }
     
-    init(repository: UserDefaultsRepository = .shared){
-        self.repository = repository
-        self.members = repository.loadItems()
-    }
-    
-    func getMembers() -> [Member]{
-        return members
-    }
-    
-    func getMember(withId id: Int) -> Member? {
-        return members.first(where: { $0.id == id })
-    }
-    
-    func addMember(name: String, imageURL: String, content: String) {
-        let maxId = members.max(by: { $0.id < $1.id })?.id ?? 0
-        let member = Member(id: maxId + 1, name: name, imageURL: imageURL, content: content)
-        members.append(member)
-        repository.saveItems(members)
+    func addMember(name: String, imageURL: String, content: String) async {
+        await repository.addMember(name: name, imageURL: imageURL, content: content)
         onMembersUpdated?()
     }
     
-    func removeMember(withId id: Int){
-        if let index = members.firstIndex(where: {$0.id == id}){
-            members.remove(at: index)
-            repository.saveItems(members)
-            onMembersUpdated?()
-        }
+    func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) async {
+        
+        var updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
+
+        if var name = name { updateData.name = name }
+        if var imageURL = imageURL { updateData.imageURL = imageURL }
+        if var content = content { updateData.content = content }
+
+        await repository.updateMember(id: id, data: updateData)
     }
     
-    func editMember(widthId id: Int, name: String? = nil, imageURL: String? = nil, content: String? = nil){
-        if let index = members.firstIndex(where: {$0.id == id}){
-            var member = members[index]
-
-            if let newName = name {
-                member.name = newName
-            }
-            if let newImageURL = imageURL {
-                member.imageURL = newImageURL
-            }
-            if let newContent = content {
-                member.content = newContent
-            }
-            members[index] = member
-            repository.saveItems(members)
-            onMembersUpdated?()
-        }
+    func deleteMember(id: UUID) async {
+        await repository.deleteMember(id: id)
+        onMembersUpdated?()
     }
 }

@@ -28,6 +28,10 @@ final class MainViewController: UIViewController {
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
+        
+//        Task {
+//            let users = await viewModel.getMembers()
+//        }
     }
     
 }
