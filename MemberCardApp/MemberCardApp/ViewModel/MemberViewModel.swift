@@ -11,13 +11,18 @@ class MemberViewModel {
     
     var onMembersUpdated: (()->Void)?
     
-    private var users: [Member] = []
+    private var members: [Member] = [] {
+        didSet {
+            onMembersUpdated?()
+        }
+    }
+    
     private let repository = MemberRepository()
     
     func getMembers() async -> [Member] {
-        let user = await repository.getMembers()
+        let members = await repository.getMembers()
         onMembersUpdated?()
-        return user
+        return members
     }
     
     func addMember(name: String, imageURL: String, content: String) async {

@@ -9,6 +9,7 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
+    let memberVM = MemberViewModel()
     let imagePickerViewModel = ImagePickerViewModel()
     
     let imageView = UIImageView()
@@ -21,6 +22,10 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .orange
         
+        Task {
+            let members = await memberVM.getMembers()
+            print(members)
+        }
         
         view.addSubview(stackView)
         
