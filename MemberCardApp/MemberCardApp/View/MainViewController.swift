@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .orange
+        view.backgroundColor = .white
         
         let imageURL = "https://picsum.photos/200/300"
         
