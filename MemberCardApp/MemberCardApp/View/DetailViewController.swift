@@ -61,6 +61,7 @@ final class DetailViewController: UIView {
         super.init(frame: frame)
         
         setupUI()
+        setupActionButtons()
     }
     
     required init?(coder: NSCoder) {
@@ -103,4 +104,16 @@ final class DetailViewController: UIView {
         ])
     }
     
+    private func setupActionButtons() {
+        editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func editButtonTapped() {
+        
+    }
+    
+    @objc private func deleteButtonTapped() {
+        
+    }
 }
