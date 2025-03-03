@@ -9,40 +9,43 @@ import Foundation
 
 class MemberViewModel {
     
-    var onMembersUpdated: (()->Void)?
+    private let useCase = MemberUseCase()
     
-    private var members: [Member] = [] {
-        didSet {
-            onMembersUpdated?()
+    var onMembersUpdated: (([Member])->Void)?
+    
+    private(set) var members: [Member] = []
+    
+    func fetchMembers() {
+        Task {
+            self.members = await useCase.getMembers()
+            onMembersUpdated?(self.members)
         }
     }
     
-    private let repository = MemberRepository()
-    
-    func getMembers() async -> [Member] {
-        let members = await repository.getMembers()
-        onMembersUpdated?()
-        return members
+    func addMember(name: String, imageURL: String, content: String) {
+        Task {
+            await useCase.addMember(name: name, imageURL: imageURL, content: content)
+            fetchMembers()
+        }
     }
     
-    func addMember(name: String, imageURL: String, content: String) async {
-        await repository.addMember(name: name, imageURL: imageURL, content: content)
-        onMembersUpdated?()
-    }
-    
-    func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) async {
-        
-        var updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
+    func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) {
+        Task {
+            var updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
 
-        if let name = name { updateData.name = name }
-        if let imageURL = imageURL { updateData.imageURL = imageURL }
-        if let content = content { updateData.content = content }
-
-        await repository.updateMember(id: id, data: updateData)
+            if let name = name { updateData.name = name }
+            if let imageURL = imageURL { updateData.imageURL = imageURL }
+            if let content = content { updateData.content = content }
+            
+            await useCase.updateMember(id: id, data: updateData)
+            fetchMembers()
+        }
     }
     
-    func deleteMember(id: UUID) async {
-        await repository.deleteMember(id: id)
-        onMembersUpdated?()
+    func deleteMember(id: UUID) {
+        Task {
+            await useCase.deleteMember(id: id)
+            fetchMembers()
+        }
     }
 }

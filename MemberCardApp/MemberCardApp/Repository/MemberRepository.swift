@@ -43,7 +43,7 @@ class MemberRepository {
         do {
             try await SupabaseManager.shared.client
                 .from("members")
-                .update(data)  // ✅ 이제 Encodable 타입이므로 오류 없음
+                .update(data)  
                 .eq("id", value: id.uuidString)
                 .execute()
             

@@ -22,10 +22,11 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .orange
         
-        Task {
-            let members = await memberVM.getMembers()
-            print(members)
+        
+        memberVM.onMembersUpdated = { updatedMembers in
+            print(updatedMembers)
         }
+        memberVM.fetchMembers()
         
         view.addSubview(stackView)
         

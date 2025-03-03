@@ -39,7 +39,7 @@ class ImagePickerViewModel: NSObject, UIImagePickerControllerDelegate, UINavigat
         guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
         
         let filePath = "uploads/\(UUID().uuidString).jpg"
-        let bucketName = "Images" // Supabase Storage에서 만든 버킷 이름
+        let bucketName = "Images"
 
         Task {
             do {
