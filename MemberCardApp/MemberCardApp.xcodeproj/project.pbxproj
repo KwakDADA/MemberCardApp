@@ -33,7 +33,7 @@
 		C9829FFE2D757BBB009BE65C /* Exceptions for "MemberCardApp" folder in "MemberCardApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Support/Info.plist,
+				Info.plist,
 			);
 			target = C9829FD52D757BB9009BE65C /* MemberCardApp */;
 		};
