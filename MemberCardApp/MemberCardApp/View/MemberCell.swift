@@ -9,15 +9,69 @@ import UIKit
 
 final class MemberCell: UICollectionViewCell {
     
+    private let profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let contentLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .orange
+        setAddView()
+        setConstraint()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setAddView() {
+        addSubview(profileImageView)
+        
+        [
+            nameLabel,
+            contentLabel
+        ].forEach { profileImageView.addSubview($0) }
+    }
+    
+    private func setConstraint() {
+        NSLayoutConstraint.activate([
+            profileImageView.topAnchor.constraint(equalTo: topAnchor),
+            profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            profileImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            profileImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            nameLabel.bottomAnchor.constraint(equalTo: contentLabel.topAnchor, constant: -10)
+        ])
+        
+        NSLayoutConstraint.activate([
+            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
+        ])
+    }
+    
+    func configureCell(withMember member: Member) {
+        nameLabel.text = member.name
+        contentLabel.text = member.content
     }
 }
