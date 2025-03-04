@@ -75,7 +75,7 @@ final class TeamCollectionView: UIView {
     
     private func setConstraint() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
+            collectionView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -132,7 +132,7 @@ final class TeamCollectionView: UIView {
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
+                section.contentInsets = .init(top: 20, leading: 0, bottom: 40, trailing: 0)
                 section.interGroupSpacing = 8
                 section.orthogonalScrollingBehavior = .groupPagingCentered
                 section.boundarySupplementaryItems = [headerItem]
