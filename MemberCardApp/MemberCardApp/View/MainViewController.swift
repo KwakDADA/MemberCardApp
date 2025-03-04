@@ -9,70 +9,83 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    let memberVM = MemberViewModel()
-    let imagePickerViewModel = ImagePickerViewModel()
+    typealias DataSourceType = UICollectionViewDiffableDataSource<MainSection, MainItem>
     
-    let imageView = UIImageView()
+    private lazy var teamCollectionView: TeamCollectionView = .init()
+    private var dataSource: DataSourceType?
+    private var sections = [MainSection]()
     
-    let button = UIButton()
-    
-    let stackView = UIStackView()
-    
+    override func loadView() {
+        view = teamCollectionView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .orange
+        view.backgroundColor = .white
         
-        
-        memberVM.onMembersUpdated = { updatedMembers in
-            print(updatedMembers)
-        }
-        memberVM.fetchMembers()
-        
-        view.addSubview(stackView)
-        
-        stackView.addArrangedSubview(imageView)
-        stackView.addArrangedSubview(button)
-        
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.spacing = 20
-        stackView.distribution = .equalSpacing
-        
-        button.setTitle("click", for: .normal)
-        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        button.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        imageView.backgroundColor = .lightGray
-        
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            imageView.widthAnchor.constraint(equalToConstant: 200),
-            imageView.heightAnchor.constraint(equalToConstant: 200)
-        ])
-        
-        imagePickerViewModel.onImageUpload = { [weak self] imageURL in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                guard let imageURL = imageURL else {
-                    return
-                }
-                ImageLoader.shared.loadImage(from: imageURL) { image in
-                    self.imageView.image = image
-                }
-            }
-        }
+        configureDataSource()
     }
-    
-    @objc func didTapButton() {
-        imagePickerViewModel.presentImagePicker(from: self)
-    }
-    
 }
 
+// MARK: - DiffableDataSource
+extension MainViewController {
+    private func configureDataSource() {
+        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
+            
+            let sections = self.sections[indexPath.section]
+            
+            switch sections {
+            case .teamInfo:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
+                
+                return cell
+            case .memberCard:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
+                
+                guard let member = item.member else { return cell }
+                cell.configureCell(withMember: member)
+                
+                return cell
+            }
+        })
+        
+        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath -> UICollectionReusableView? in
+            switch kind {
+            case SupplementaryViewKind.header:
+                let section = self.sections[indexPath.section]
+                let sectionTitle: String
+                
+                switch section {
+                case .teamInfo:
+                    sectionTitle = MainHeaderTitle.team
+                case .memberCard:
+                    sectionTitle = MainHeaderTitle.member
+                }
+                
+                let headerView = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: SupplementaryViewKind.header,
+                    withReuseIdentifier: ReuseIdentifier.mainHeaderView,
+                    for: indexPath) as! MainHeaderView
+                headerView.configureHeader(withTitle: sectionTitle)
+                
+                return headerView
+                
+            default:
+                return nil
+            }
+        }
+        
+        var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
+        initialSnapshot.appendSections([.teamInfo, .memberCard])
+        
+        // TODO: 레이아웃 확인용, 데이터 연동 후 삭제
+        initialSnapshot.appendItems([.team], toSection: .teamInfo)
+        initialSnapshot.appendItems([.member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
+                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
+                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!"))], toSection: .memberCard)
+        
+        sections = initialSnapshot.sectionIdentifiers
+        teamCollectionView.sections = sections
+        dataSource?.apply(initialSnapshot, animatingDifferences: true)
+    }
+}
