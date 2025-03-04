@@ -23,8 +23,14 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .white
         teamCollectionView.collectionView.delegate = self
         configureDataSource()
-        viewModel.fetchMembers()
         bindViewModel()
+        viewModel.fetchMembers()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        viewModel.fetchMembers()
     }
     
     private func bindViewModel() {
