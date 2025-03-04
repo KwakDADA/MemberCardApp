@@ -43,11 +43,8 @@ final class AddEditViewController: UIViewController {
     
     private func setupImagePicker() {
         imagePickerViewModel.onImageUpload = { [weak self] imageURL in
-            guard let self = self, let imageURL = imageURL else { return }
-            
-            if let url = URL(string: imageURL) {
-                self.loadImage(from: url)
-            }
+            guard let self = self, let imageURL = imageURL, let url = URL(string: imageURL) else { return }
+            self.loadImage(from: url)
         }
     }
     
