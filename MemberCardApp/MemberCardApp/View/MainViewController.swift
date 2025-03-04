@@ -9,12 +9,10 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    private var viewModel: MemberViewModel = .init()
-    
+    private var viewModel = MemberViewModel.shared
     private lazy var teamCollectionView: TeamCollectionView = .init()
     private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
     private var sections = [MainSection]()
-//    private let memberViewModel = MemberViewModel.shared
     
     override func loadView() {
         view = teamCollectionView
