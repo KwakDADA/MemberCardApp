@@ -44,7 +44,9 @@ extension MainViewController: UICollectionViewDelegate {
               case let .member(member) = item else { return }
         
         if indexPath.row == viewModel.members.count {
-            print("addEditVC로 이동")
+            let addEditVC = AddEditViewController()
+            addEditVC.modalPresentationStyle = .fullScreen
+            self.present(addEditVC, animated: true, completion: nil)
         } else {
             print("detailVC로 이동")
         }
