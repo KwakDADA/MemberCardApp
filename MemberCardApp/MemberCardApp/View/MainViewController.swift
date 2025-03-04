@@ -22,7 +22,7 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        teamCollectionView.collectionView.delegate = self
         configureDataSource()
         viewModel.fetchMembers()
         bindViewModel()
@@ -33,6 +33,19 @@ final class MainViewController: UIViewController {
             DispatchQueue.main.async {
                 self?.updateSnapshot(with: members)
             }
+        }
+    }
+}
+
+extension MainViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSource?.itemIdentifier(for: indexPath),
+              case let .member(member) = item else { return }
+        
+        if indexPath.row == viewModel.members.count {
+            print("addEditVC로 이동")
+        } else {
+            print("detailVC로 이동")
         }
     }
 }
