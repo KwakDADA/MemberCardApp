@@ -31,12 +31,7 @@ class MemberViewModel {
     
     func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) {
         Task {
-            var updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
-
-            if let name = name { updateData.name = name }
-            if let imageURL = imageURL { updateData.imageURL = imageURL }
-            if let content = content { updateData.content = content }
-            
+            let updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
             await useCase.updateMember(id: id, data: updateData)
             fetchMembers()
         }

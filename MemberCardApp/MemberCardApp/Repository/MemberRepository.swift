@@ -43,7 +43,7 @@ class MemberRepository {
         do {
             try await SupabaseManager.shared.client
                 .from("members")
-                .update(data)  
+                .update(data)
                 .eq("id", value: id.uuidString)
                 .execute()
             
