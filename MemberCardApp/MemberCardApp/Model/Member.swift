@@ -19,4 +19,3 @@ struct UpdateMemberData: Encodable {
     var imageURL: String?
     var content: String?
 }
-
