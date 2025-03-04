@@ -48,7 +48,7 @@ extension MainViewController: UICollectionViewDelegate {
             addEditVC.modalPresentationStyle = .fullScreen
             self.present(addEditVC, animated: true, completion: nil)
         } else {
-            print("detailVC로 이동")
+            self.navigationController?.pushViewController(DetailViewController(member: member),animated: true)
         }
     }
 }
