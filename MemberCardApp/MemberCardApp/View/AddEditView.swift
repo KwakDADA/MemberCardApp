@@ -20,13 +20,34 @@ final class AddEditView: UIView {
         return imageView
     }()
     
-    let contentTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "내용"
+    let nameTextField: UITextField = {
+       let textField = UITextField()
+        textField.placeholder = "이름"
+        textField.backgroundColor = UIColor(
+            red: 241.0/255.0,
+            green: 243.0/255.0,
+            blue: 245.0/255.0,
+            alpha: 1.0
+        )
+        textField.layer.cornerRadius = 8
+        textField.layer.masksToBounds = true
         return textField
     }()
     
-    let stackView: UIStackView = {
+    let contentTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor(
+            red: 241.0/255.0,
+            green: 243.0/255.0,
+            blue: 245.0/255.0,
+            alpha: 1.0
+        )
+        textView.layer.cornerRadius = 8
+        textView.layer.masksToBounds = true
+        return textView
+    }()
+    
+    let buttonStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.distribution = .fill
@@ -35,12 +56,23 @@ final class AddEditView: UIView {
         return sv
     }()
     
+    let memberStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .vertical
+        sv.distribution = .fill
+        sv.alignment = .fill
+        sv.spacing = 8
+        return sv
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
-        setupStackView()
+        setupButtonStackView()
         addSubview(profileImageView)
-        addSubview(contentTextField)
+        addSubview(nameTextField)
+        addSubview(contentTextView)
+        setupMemberStackView()
         setConstraints()
     }
     
@@ -48,48 +80,62 @@ final class AddEditView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupStackView() {
+    func setupButtonStackView() {
         let spacerView = UIView()
-        stackView.addArrangedSubview(spacerView)
-        stackView.addArrangedSubview(addButton)
+        buttonStackView.addArrangedSubview(spacerView)
+        buttonStackView.addArrangedSubview(addButton)
         
-        self.addSubview(stackView)        
+        self.addSubview(buttonStackView)
+    }
+    
+    func setupMemberStackView() {
+        memberStackView.addArrangedSubview(profileImageView)
+        memberStackView.addArrangedSubview(nameTextField)
+        memberStackView.addArrangedSubview(contentTextView)
+        
+        self.addSubview(memberStackView)
     }
     
     func setConstraints() {
         setProfileImageViewConstraints()
-        setContentTextFieldConstraints()
-        setStackViewConstraints()
+        setContentTextViewConstraints()
+        setButtonStackViewConstraints()
+        setMemberStackViewConstraints()
     }
     
     func setProfileImageViewConstraints() {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            profileImageView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
-            profileImageView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            profileImageView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             profileImageView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
     
-    func setContentTextFieldConstraints() {
-        contentTextField.translatesAutoresizingMaskIntoConstraints = false
+    func setContentTextViewConstraints() {
+        contentTextView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            contentTextField.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 20),
-            contentTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            contentTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            contentTextView.heightAnchor.constraint(equalToConstant: 120)
         ])
     }
     
-    func setStackViewConstraints() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    func setButtonStackViewConstraints() {
+        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 60),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            buttonStackView.topAnchor.constraint(equalTo: topAnchor, constant: 60),
+            buttonStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+        ])
+    }
+    
+    func setMemberStackViewConstraints() {
+        memberStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            memberStackView.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor, constant: 20),
+            memberStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            memberStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
         ])
     }
 }
