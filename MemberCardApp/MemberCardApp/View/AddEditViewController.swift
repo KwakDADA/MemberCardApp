@@ -10,8 +10,11 @@ import UIKit
 final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
     private let imagePickerViewModel = ImagePickerViewModel()
+    private let memberViewModel = MemberViewModel()
     
     var member: Member
+    
+    private var selectedImageURL: String?
     
     init(member: Member){
         self.member = member
@@ -44,6 +47,7 @@ final class AddEditViewController: UIViewController {
     private func setupImagePicker() {
         imagePickerViewModel.onImageUpload = { [weak self] imageURL in
             guard let self = self, let imageURL = imageURL, let url = URL(string: imageURL) else { return }
+            self.selectedImageURL = imageURL
             self.loadImage(from: url)
         }
     }
@@ -60,6 +64,15 @@ final class AddEditViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
-        self.dismiss(animated: true, completion: nil)
+        guard let imageURL = self.selectedImageURL,
+              let name = self.addEditView.nameTextField.text, !name.isEmpty,
+              let content = self.addEditView.contentTextView.text, !content.isEmpty else {
+//            alertView merge 이후 반영
+//            addEditView.createAlert(message: "빈칸을 채워주세요")
+            return
+        }
+        
+//        addMember가 잘 작동하는지 테스트 필요
+        memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
     }
 }
