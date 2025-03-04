@@ -30,6 +30,7 @@ extension MainItem {
 enum ReuseIdentifier {
     static let teamCell = "TeamCell"
     static let memberCell = "MemberCell"
+    static let addMemberCell = "AddMemberCell"
     static let mainHeaderView = "MainHeaderView"
 }
 
@@ -50,6 +51,7 @@ final class TeamCollectionView: UIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(TeamCell.self, forCellWithReuseIdentifier: ReuseIdentifier.teamCell)
         collectionView.register(MemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.memberCell)
+        collectionView.register(AddMemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.addMemberCell)
         collectionView.register(MainHeaderView.self, forSupplementaryViewOfKind: SupplementaryViewKind.header, withReuseIdentifier: ReuseIdentifier.mainHeaderView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView

@@ -9,30 +9,53 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    typealias DataSourceType = UICollectionViewDiffableDataSource<MainSection, MainItem>
+    private var viewModel: MemberViewModel = .init()
     
     private lazy var teamCollectionView: TeamCollectionView = .init()
-    private var dataSource: DataSourceType?
+    private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
     private var sections = [MainSection]()
 //    private let memberViewModel = MemberViewModel.shared
     
     override func loadView() {
         view = teamCollectionView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        teamCollectionView.collectionView.delegate = self
         configureDataSource()
+        viewModel.fetchMembers()
+        bindViewModel()
+    }
+    
+    private func bindViewModel() {
+        viewModel.onMembersUpdated = { [weak self] members in
+            DispatchQueue.main.async {
+                self?.updateSnapshot(with: members)
+            }
+        }
+    }
+}
+
+extension MainViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSource?.itemIdentifier(for: indexPath),
+              case let .member(member) = item else { return }
+        
+        if indexPath.row == viewModel.members.count {
+            print("addEditVC로 이동")
+        } else {
+            print("detailVC로 이동")
+        }
     }
 }
 
 // MARK: - DiffableDataSource
 extension MainViewController {
     private func configureDataSource() {
-        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            
+        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            guard let self = self else { return nil }
             let sections = self.sections[indexPath.section]
             
             switch sections {
@@ -41,12 +64,17 @@ extension MainViewController {
                 
                 return cell
             case .memberCard:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
-                
-                guard let member = item.member else { return cell }
-                cell.configureCell(withMember: member)
-                
-                return cell
+                if indexPath.row == self.viewModel.members.count {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.addMemberCell, for: indexPath) as! AddMemberCell
+                    return cell
+                } else {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
+                    
+                    guard let member = item.member else { return cell }
+                    cell.configureCell(withMember: member)
+                    
+                    return cell
+                }
             }
         })
         
@@ -78,15 +106,25 @@ extension MainViewController {
         
         var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
         initialSnapshot.appendSections([.teamInfo, .memberCard])
-        
-        // TODO: 레이아웃 확인용, 데이터 연동 후 삭제
         initialSnapshot.appendItems([.team], toSection: .teamInfo)
-        initialSnapshot.appendItems([.member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
-                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
-                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!"))], toSection: .memberCard)
         
         sections = initialSnapshot.sectionIdentifiers
         teamCollectionView.sections = sections
         dataSource?.apply(initialSnapshot, animatingDifferences: true)
+    }
+    
+    private func updateSnapshot(with members: [Member]) {
+        guard let dataSource = self.dataSource else { return }
+        
+        var snapshot = dataSource.snapshot()
+        
+        let previousItems = snapshot.itemIdentifiers(inSection: .memberCard)
+        snapshot.deleteItems(previousItems)
+        
+        let memberItems = members.map { MainItem.member($0) }
+        snapshot.appendItems(memberItems, toSection: .memberCard)
+        snapshot.appendItems([.member(Member(id: UUID(), name: "", imageURL: "", content: ""))])
+        
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
