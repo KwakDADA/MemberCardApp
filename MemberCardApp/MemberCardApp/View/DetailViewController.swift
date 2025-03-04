@@ -148,7 +148,8 @@ final class DetailViewController: UIViewController {
     @objc private func deleteButtonTapped() {
         print("deleteButton tapped.")
         viewModel.deleteMember(id: member.id)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
+        // dismiss(animated: true)
     }
     
     /*
