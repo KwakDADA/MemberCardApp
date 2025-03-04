@@ -142,7 +142,7 @@ final class DetailViewController: UIViewController {
     
     @objc private func editButtonTapped() {
         print("editButton tapped.")
-        // navigation?.push(AddEditViewController(member: member))
+        navigation?.push(AddEditViewController(member: member))
     }
     
     @objc private func deleteButtonTapped() {
