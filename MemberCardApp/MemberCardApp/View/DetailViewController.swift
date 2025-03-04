@@ -10,6 +10,7 @@ import UIKit
 final class DetailViewController: UIViewController {
 
     let member: Member
+    private let viewModel = MemberViewModel.shared
     
     // 상단 버튼 2개
     private lazy var deleteButton = makeButton(title: "삭제")
@@ -44,6 +45,15 @@ final class DetailViewController: UIViewController {
     init(member: Member) {
         self.member = member
         super.init(nibName: nil, bundle: nil)
+        
+        // 이미지 로드
+        ImageLoader.shared.loadImage(from: member.imageURL) {
+            guard let image = $0 else {
+                self.imageView.image = UIImage(systemName: "photo")
+                return
+            }
+            self.imageView.image = image
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -61,29 +71,44 @@ final class DetailViewController: UIViewController {
     }
     
     private func setupUI() {
-        // 버튼 스택 뷰
+        // 스크롤 뷰
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        
+        // 버튼 스택 뷰 -> 내비게이션 바 버튼
         let spacer = UIView()
         let buttonStackView = UIStackView(arrangedSubviews: [spacer, deleteButton, editButton])
         buttonStackView.axis = .horizontal
         buttonStackView.alignment = .trailing
         buttonStackView.spacing = 8
         
+        let stackBarButtonItem = UIBarButtonItem(customView: buttonStackView)
+        navigationItem.rightBarButtonItem = stackBarButtonItem
+        
         // 화면 전체 스택 뷰
         let stackViewSpacer = UIView()
-        let stackView = UIStackView(arrangedSubviews: [buttonStackView, imageView, nameLabel, memberName, contentLabel, contentLabelText, stackViewSpacer])
+        let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, memberName, contentLabel, contentLabelText, stackViewSpacer])
         
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(stackView)
+        // view.addSubview(stackView)
+        scrollView.addSubview(stackView)
         
         // 오토 레이아웃
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -20),
+            stackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -40),
             
             buttonStackView.heightAnchor.constraint(equalToConstant: 50),
             imageView.heightAnchor.constraint(equalToConstant: 200),
@@ -99,13 +124,13 @@ final class DetailViewController: UIViewController {
     
     private func makeLabel(title: String) -> UILabel {
         let label = UILabel()
-        label.text = title
+        label.text = "  \(title)"
         label.backgroundColor = .orange
         label.textColor = .white
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 4
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.numberOfLines = 0
         return label
     }
@@ -122,7 +147,7 @@ final class DetailViewController: UIViewController {
     
     @objc private func deleteButtonTapped() {
         print("deleteButton tapped.")
-        // MemberViewModel().removeMember(withId: member.id)
+        viewModel.deleteMember(id: member.id)
         dismiss(animated: true)
     }
     

@@ -19,14 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let viewController = DetailViewController(member: Member(id: UUID(), name: "권순욱", imageURL: "www.naver.com", content: """
-        1. [자신]에 대한 설명 및 MBTI
-        2. 객관적으로 살펴본 자신의 장점
-        3. 자신의 스타일 협업 스타일 소개
-        4. 블로그 주소
-"""))
+        let viewController = DetailViewController(member: Member.sample)
         
-        // let viewController = DetailViewController2(member: Member(id: UUID(), name: "권순욱", imageURL: "www.naver.com", content: "하하하하하하하하하하하하하하하하하하하하하하하하하"))
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }

@@ -9,7 +9,11 @@ import Foundation
 
 class MemberViewModel {
     
-    private let useCase = MemberUseCase()
+    private var useCase = MemberUseCase()
+    
+    init(useCase: MemberUseCase = MemberUseCase()) {
+        self.useCase = useCase
+    }
     
     var onMembersUpdated: (([Member])->Void)?
     
