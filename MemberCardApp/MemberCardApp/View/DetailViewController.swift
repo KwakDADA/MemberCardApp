@@ -23,11 +23,11 @@ final class DetailViewController: UIViewController {
         return imageView
     }()
     
-    // 하단 내용의 레이블
+    // 하단 소제목
     private lazy var nameLabel = makeLabel(title: "이름")
     private lazy var contentLabel = makeLabel(title: "내용")
     
-    // 하단 실제 내용
+    // 하단 내용
     private lazy var memberName: UILabel = {
         let label = UILabel()
         label.text = member.name
@@ -68,25 +68,12 @@ final class DetailViewController: UIViewController {
         buttonStackView.alignment = .trailing
         buttonStackView.spacing = 8
         
-        // 내용1(이름) 스택 뷰
-        let content1StackView = UIStackView(arrangedSubviews: [nameLabel, memberName])
-        content1StackView.axis = .vertical
-        content1StackView.spacing = 4
-        
-        // 내용2(실제 내용) 스택 뷰
-        let content2StackView = UIStackView(arrangedSubviews: [contentLabel, contentLabelText])
-        content2StackView.axis = .vertical
-        content2StackView.spacing = 4
-        
-        // 내용 전체 스택 뷰(이름, 내용)
-        let contentsStackViewSpacer = UIView()
-        let contentsStackView = UIStackView(arrangedSubviews: [content1StackView, content2StackView, contentsStackViewSpacer])
-        contentsStackView.axis = .vertical
-        contentsStackView.spacing = 8
-        
         // 화면 전체 스택 뷰
-        let stackView = UIStackView(arrangedSubviews: [buttonStackView, imageView, contentsStackView])
+        let stackViewSpacer = UIView()
+        let stackView = UIStackView(arrangedSubviews: [buttonStackView, imageView, nameLabel, memberName, contentLabel, contentLabelText, stackViewSpacer])
+        
         stackView.axis = .vertical
+        stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(stackView)
@@ -100,19 +87,7 @@ final class DetailViewController: UIViewController {
             
             buttonStackView.heightAnchor.constraint(equalToConstant: 50),
             imageView.heightAnchor.constraint(equalToConstant: 200),
-            contentsStackView.heightAnchor.constraint(equalToConstant: 300),
             
-            contentsStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 50),
-            contentsStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 50),
-            // imageView.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor, constant: 20),
-            
-//            content1StackView.widthAnchor.constraint(equalToConstant: 50),
-//            content3StackView.widthAnchor.constraint(equalToConstant: 200),
-            
-            nameLabel.widthAnchor.constraint(equalToConstant: 40),
-            contentLabel.widthAnchor.constraint(equalToConstant: 40),
-            
-            spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: 0)
         ])
     }
     
@@ -129,7 +104,7 @@ final class DetailViewController: UIViewController {
         label.textColor = .white
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = 8
+        label.layer.cornerRadius = 4
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -141,14 +116,15 @@ final class DetailViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
+        print("editButton tapped.")
         // navigation?.push(AddEditViewController(member: member))
     }
     
     @objc private func deleteButtonTapped() {
+        print("deleteButton tapped.")
         // MemberViewModel().removeMember(withId: member.id)
+        dismiss(animated: true)
     }
-    
-    
     
     /*
     // MARK: - Navigation
