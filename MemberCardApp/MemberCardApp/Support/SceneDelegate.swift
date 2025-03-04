@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let viewController = ViewController()
+        let viewController = DetailViewController(member: Member(id: 1, name: "권순욱", imageURL: "www.naver.com", content: "하하하하하하하하하하하하하하하하하하하하하하하하하"))
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }

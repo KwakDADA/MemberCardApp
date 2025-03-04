@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct Member {
+    var id: Int
+    var name: String
+    var imageURL: String
+    var content: String
+}
