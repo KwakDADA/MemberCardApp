@@ -9,7 +9,7 @@ import UIKit
 
 final class DetailViewController: UIViewController {
 
-    var member: Member
+    private let member: Member
     private let viewModel = MemberViewModel.shared
     
     // 상단 버튼 2개
@@ -19,7 +19,7 @@ final class DetailViewController: UIViewController {
     // 중앙 이미지 뷰
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "photo")
+        //imageView.image = UIImage(systemName: "photo")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
