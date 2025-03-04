@@ -7,14 +7,24 @@
 
 import UIKit
 
-final class AddEditViewController: UIView {
-
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+final class AddEditViewController: UIViewController {
+    private let addEditView = AddEditView()
+    
+    override func loadView() {
+        view = addEditView
     }
-    */
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    private func setupUI() {
+        addEditView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func addButtonTapped() {
+        print("저장 버튼 터치")
+    }
 }
