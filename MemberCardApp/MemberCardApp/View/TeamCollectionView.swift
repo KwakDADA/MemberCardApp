@@ -30,6 +30,16 @@ extension MainItem {
 enum ReuseIdentifier {
     static let teamCell = "TeamCell"
     static let memberCell = "MemberCell"
+    static let mainHeaderView = "MainHeaderView"
+}
+
+enum SupplementaryViewKind {
+    static let header = "header"
+}
+
+enum MainHeaderTitle {
+    static let team = "팀"
+    static let member = "멤버"
 }
 
 final class TeamCollectionView: UIView {
@@ -40,6 +50,7 @@ final class TeamCollectionView: UIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(TeamCell.self, forCellWithReuseIdentifier: ReuseIdentifier.teamCell)
         collectionView.register(MemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.memberCell)
+        collectionView.register(MainHeaderView.self, forSupplementaryViewOfKind: SupplementaryViewKind.header, withReuseIdentifier: ReuseIdentifier.mainHeaderView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -62,7 +73,7 @@ final class TeamCollectionView: UIView {
     
     private func setConstraint() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -75,6 +86,9 @@ final class TeamCollectionView: UIView {
             guard let self = self,
                   let sections = self.sections else { return nil }
             let section = sections[sectionIndex]
+            
+            let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50))
+            let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemSize, elementKind: SupplementaryViewKind.header, alignment: .top)
             
             switch section {
             case .teamInfo:
@@ -94,7 +108,8 @@ final class TeamCollectionView: UIView {
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 36, leading: 0, bottom: 20, trailing: 0)
+                section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
+                section.boundarySupplementaryItems = [headerItem]
                 
                 return section
                 
@@ -115,9 +130,10 @@ final class TeamCollectionView: UIView {
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 36, leading: 0, bottom: 43, trailing: 0)
+                section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
                 section.interGroupSpacing = 8
                 section.orthogonalScrollingBehavior = .groupPagingCentered
+                section.boundarySupplementaryItems = [headerItem]
                 
                 return section
             }

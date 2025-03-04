@@ -49,6 +49,32 @@ extension MainViewController {
             }
         })
         
+        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath -> UICollectionReusableView? in
+            switch kind {
+            case SupplementaryViewKind.header:
+                let section = self.sections[indexPath.section]
+                let sectionTitle: String
+                
+                switch section {
+                case .teamInfo:
+                    sectionTitle = MainHeaderTitle.team
+                case .memberCard:
+                    sectionTitle = MainHeaderTitle.member
+                }
+                
+                let headerView = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: SupplementaryViewKind.header,
+                    withReuseIdentifier: ReuseIdentifier.mainHeaderView,
+                    for: indexPath) as! MainHeaderView
+                headerView.configureHeader(withTitle: sectionTitle)
+                
+                return headerView
+                
+            default:
+                return nil
+            }
+        }
+        
         var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
         initialSnapshot.appendSections([.teamInfo, .memberCard])
         
