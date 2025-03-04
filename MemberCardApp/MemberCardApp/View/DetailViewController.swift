@@ -9,7 +9,7 @@ import UIKit
 
 final class DetailViewController: UIViewController {
 
-    let member: Member
+    private let member: Member
     private let viewModel = MemberViewModel.shared
     
     // 상단 버튼 2개
@@ -19,7 +19,7 @@ final class DetailViewController: UIViewController {
     // 중앙 이미지 뷰
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "photo")
+        //imageView.image = UIImage(systemName: "photo")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -142,7 +142,7 @@ final class DetailViewController: UIViewController {
     
     @objc private func editButtonTapped() {
         print("editButton tapped.")
-        navigation?.push(AddEditViewController(member: member))
+        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
     }
     
     @objc private func deleteButtonTapped() {
