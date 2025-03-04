@@ -14,6 +14,7 @@ final class MainViewController: UIViewController {
     private lazy var teamCollectionView: TeamCollectionView = .init()
     private var dataSource: DataSourceType?
     private var sections = [MainSection]()
+//    private let memberViewModel = MemberViewModel.shared
     
     override func loadView() {
         view = teamCollectionView

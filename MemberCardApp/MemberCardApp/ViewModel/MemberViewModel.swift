@@ -8,6 +8,7 @@
 import Foundation
 
 class MemberViewModel {
+    static let shared = MemberViewModel()
     
     private var useCase = MemberUseCase()
     
