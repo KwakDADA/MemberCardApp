@@ -17,6 +17,16 @@ enum MainItem: Hashable {
     case member(Member)
 }
 
+extension MainItem {
+    var member: Member? {
+        if case .member(let member) = self {
+            return member
+        } else {
+            return nil
+        }
+    }
+}
+
 enum ReuseIdentifier {
     static let teamCell = "TeamCell"
     static let memberCell = "MemberCell"
@@ -84,20 +94,20 @@ final class TeamCollectionView: UIView {
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 36, leading: 0, bottom: 43, trailing: 0)
+                section.contentInsets = .init(top: 36, leading: 0, bottom: 20, trailing: 0)
                 
                 return section
                 
             case .memberCard:
                 let itemSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1),
-                    heightDimension: .estimated(100)
+                    heightDimension: .absolute(400)
                 )
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(0.92),
-                    heightDimension: .estimated(100)
+                    heightDimension: .absolute(400)
                 )
                 let group = NSCollectionLayoutGroup.horizontal(
                     layoutSize: groupSize,

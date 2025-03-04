@@ -12,12 +12,16 @@ final class TeamCell: UICollectionViewCell {
     private let contentLabel: UILabel = {
         let label = UILabel()
         label.text = "예시\n1. ~~~~ \n2. ~~~~~\n3. ~~~~~~~~"
+        label.textColor = .black
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        backgroundColor = .brown
         setAddView()
         setConstraint()
     }
@@ -32,8 +36,10 @@ final class TeamCell: UICollectionViewCell {
     
     private func setConstraint() {
         NSLayoutConstraint.activate([
-            contentLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor)
+            contentLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
         ])
     }
 }

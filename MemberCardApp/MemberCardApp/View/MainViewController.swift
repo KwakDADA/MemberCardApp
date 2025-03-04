@@ -21,6 +21,7 @@ final class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         
         configureDataSource()
     }
@@ -29,7 +30,7 @@ final class MainViewController: UIViewController {
 // MARK: - DiffableDataSource
 extension MainViewController {
     private func configureDataSource() {
-        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, itemIdentifier) -> UICollectionViewCell? in
+        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
             
             let sections = self.sections[indexPath.section]
             
@@ -41,7 +42,8 @@ extension MainViewController {
             case .memberCard:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
                 
-                // cell.configureCell()
+                guard let member = item.member else { return cell }
+                cell.configureCell(withMember: member)
                 
                 return cell
             }
@@ -49,6 +51,12 @@ extension MainViewController {
         
         var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
         initialSnapshot.appendSections([.teamInfo, .memberCard])
+        
+        // TODO: 레이아웃 확인용, 데이터 연동 후 삭제
+        initialSnapshot.appendItems([.team], toSection: .teamInfo)
+        initialSnapshot.appendItems([.member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
+                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
+                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!"))], toSection: .memberCard)
         
         sections = initialSnapshot.sectionIdentifiers
         teamCollectionView.sections = sections
