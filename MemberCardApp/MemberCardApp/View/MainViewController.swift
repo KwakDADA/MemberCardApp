@@ -40,8 +40,8 @@ final class MainViewController: UIViewController {
 // MARK: - DiffableDataSource
 extension MainViewController {
     private func configureDataSource() {
-        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            
+        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            guard let self = self else { return nil }
             let sections = self.sections[indexPath.section]
             
             switch sections {
@@ -50,12 +50,17 @@ extension MainViewController {
                 
                 return cell
             case .memberCard:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
-                
-                guard let member = item.member else { return cell }
-                cell.configureCell(withMember: member)
-                
-                return cell
+                if indexPath.row == self.viewModel.members.count {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.addMemberCell, for: indexPath) as! AddMemberCell
+                    return cell
+                } else {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
+                    
+                    guard let member = item.member else { return cell }
+                    cell.configureCell(withMember: member)
+                    
+                    return cell
+                }
             }
         })
         
@@ -104,6 +109,7 @@ extension MainViewController {
         
         let memberItems = members.map { MainItem.member($0) }
         snapshot.appendItems(memberItems, toSection: .memberCard)
+        snapshot.appendItems([.member(Member(id: UUID(), name: "", imageURL: "", content: ""))])
         
         dataSource.apply(snapshot, animatingDifferences: true)
     }
