@@ -9,11 +9,14 @@ import UIKit
 
 final class MemberCell: UICollectionViewCell {
     
+    let imageLoader = ImageLoader.shared
+    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .cyan // TODO: 레이아웃 확인용, 이미지 임포트 후 삭제
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = .lightGray
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -77,5 +80,8 @@ final class MemberCell: UICollectionViewCell {
     func configureCell(withMember member: Member) {
         nameLabel.text = member.name
         contentLabel.text = member.content
+        imageLoader.loadImage(from: member.imageURL) { [weak self] image in
+            self?.profileImageView.image = image
+        }
     }
 }

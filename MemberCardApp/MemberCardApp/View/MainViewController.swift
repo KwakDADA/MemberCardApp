@@ -9,21 +9,31 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    typealias DataSourceType = UICollectionViewDiffableDataSource<MainSection, MainItem>
+    private var viewModel: MemberViewModel = .init()
     
     private lazy var teamCollectionView: TeamCollectionView = .init()
-    private var dataSource: DataSourceType?
+    private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
     private var sections = [MainSection]()
     
     override func loadView() {
         view = teamCollectionView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         configureDataSource()
+        viewModel.fetchMembers()
+        bindViewModel()
+    }
+    
+    private func bindViewModel() {
+        viewModel.onMembersUpdated = { [weak self] members in
+            DispatchQueue.main.async {
+                self?.updateSnapshot(with: members)
+            }
+        }
     }
 }
 
@@ -77,15 +87,24 @@ extension MainViewController {
         
         var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
         initialSnapshot.appendSections([.teamInfo, .memberCard])
-        
-        // TODO: 레이아웃 확인용, 데이터 연동 후 삭제
         initialSnapshot.appendItems([.team], toSection: .teamInfo)
-        initialSnapshot.appendItems([.member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
-                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!")),
-                                     .member(Member(id: UUID(), name: "이름", imageURL: "", content: "내용!!"))], toSection: .memberCard)
         
         sections = initialSnapshot.sectionIdentifiers
         teamCollectionView.sections = sections
         dataSource?.apply(initialSnapshot, animatingDifferences: true)
+    }
+    
+    private func updateSnapshot(with members: [Member]) {
+        guard let dataSource = self.dataSource else { return }
+        
+        var snapshot = dataSource.snapshot()
+        
+        let previousItems = snapshot.itemIdentifiers(inSection: .memberCard)
+        snapshot.deleteItems(previousItems)
+        
+        let memberItems = members.map { MainItem.member($0) }
+        snapshot.appendItems(memberItems, toSection: .memberCard)
+        
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
