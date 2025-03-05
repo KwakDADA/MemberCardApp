@@ -61,5 +61,5 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-MemberCardApp/MemberCardApp/Support/Key/
+MemberCardApp/MemberCardApp/Support/Key/ignoreData.swift
 .DS_Store
