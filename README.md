@@ -20,6 +20,17 @@ MemberCardApp은 팀과 팀원 정보를 관리할 수 있는 애플리케이션
 
 앱의 핵심 기능은 팀원 목록 조회, 추가, 수정, 삭제이며, MVVM 패턴을 적용해 깔끔한 코드 구조를 유지합니다. 싱글톤 패턴을 활용한 ImageLoader, SupabaseManager 등의 클래스를 통해 데이터 및 네트워크 관리를 효율적으로 처리합니다.
 
+## 와이어 프레임
+
+<img width="3035" alt="Untitled" src="https://github.com/user-attachments/assets/615af6ee-e25d-4216-bdf1-6f047498d989" />
+
+## 역할 분담
+
+김신영 : 멤버 추가, 수정 뷰 UI
+곽다은 : 메인화면 컬렉션뷰 및 커스텀 셀 등 UI 작업
+권순욱 : 상세화면 UI 작업
+신재욱 : Model, ViewModel, UseCase, Repository 구현, Supabase 연동
+
 ## 기능
 
 - 메인화면
