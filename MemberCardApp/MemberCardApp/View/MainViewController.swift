@@ -9,6 +9,7 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
+    //test
     private var viewModel = MemberViewModel.shared
     private lazy var teamCollectionView: TeamCollectionView = .init()
     private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
