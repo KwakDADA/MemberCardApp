@@ -48,7 +48,7 @@ extension MainViewController: UICollectionViewDelegate {
               case let .member(member) = item else { return }
         
         if indexPath.row == viewModel.members.count {
-            print("addEditVC로 이동")
+            self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
         } else {
             self.navigationController?.pushViewController(DetailViewController(member: member),animated: true)
         }
