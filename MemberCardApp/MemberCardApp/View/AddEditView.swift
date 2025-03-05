@@ -93,3 +93,15 @@ final class AddEditView: UIView {
         ])
     }
 }
+
+extension AddEditView {
+    func createAlert(message: String) -> UIAlertController {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default)
+        
+        alert.addAction(confirmAction)
+        
+        return alert
+    }
+}
