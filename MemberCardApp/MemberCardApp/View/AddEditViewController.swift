@@ -38,8 +38,8 @@ final class AddEditViewController: UIViewController {
     }
     
     private func setupUI() {
-        let stackBarButtonItem = UIBarButtonItem(customView: addEditView.buttonStackView)
-        navigationItem.rightBarButtonItem = stackBarButtonItem
+        let addButton = UIBarButtonItem(customView: addEditView.addButton)
+        navigationItem.rightBarButtonItem = addButton
         
         addEditView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
@@ -68,7 +68,6 @@ final class AddEditViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
-        print("저장 버튼 터치")
         guard let imageURL = self.selectedImageURL,
               let name = self.addEditView.nameTextField.text, !name.isEmpty,
               let content = self.addEditView.contentTextView.text, !content.isEmpty else {

@@ -47,15 +47,6 @@ final class AddEditView: UIView {
         return textView
     }()
     
-    let buttonStackView: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .horizontal
-        sv.distribution = .fill
-        sv.alignment = .center
-        sv.spacing = 8
-        return sv
-    }()
-    
     let memberStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .vertical
@@ -68,7 +59,6 @@ final class AddEditView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
-        setupButtonStackView()
         addSubview(profileImageView)
         addSubview(nameTextField)
         addSubview(contentTextView)
@@ -78,14 +68,6 @@ final class AddEditView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setupButtonStackView() {
-        let spacerView = UIView()
-        buttonStackView.addArrangedSubview(spacerView)
-        buttonStackView.addArrangedSubview(addButton)
-        
-        self.addSubview(buttonStackView)
     }
     
     func setupMemberStackView() {
@@ -99,7 +81,6 @@ final class AddEditView: UIView {
     func setConstraints() {
         setProfileImageViewConstraints()
         setContentTextViewConstraints()
-        setButtonStackViewConstraints()
         setMemberStackViewConstraints()
     }
     
@@ -116,16 +97,6 @@ final class AddEditView: UIView {
         
         NSLayoutConstraint.activate([
             contentTextView.heightAnchor.constraint(equalToConstant: 120)
-        ])
-    }
-    
-    func setButtonStackViewConstraints() {
-        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            buttonStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            buttonStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
         ])
     }
     
