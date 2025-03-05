@@ -9,6 +9,7 @@ import UIKit
 
 final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
+    
     private let imagePickerViewModel = ImagePickerViewModel()
     private let memberViewModel = MemberViewModel()
     
@@ -37,6 +38,9 @@ final class AddEditViewController: UIViewController {
     }
     
     private func setupUI() {
+        let addButton = UIBarButtonItem(customView: addEditView.addButton)
+        navigationItem.rightBarButtonItem = addButton
+        
         addEditView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
@@ -67,12 +71,12 @@ final class AddEditViewController: UIViewController {
         guard let imageURL = self.selectedImageURL,
               let name = self.addEditView.nameTextField.text, !name.isEmpty,
               let content = self.addEditView.contentTextView.text, !content.isEmpty else {
-//            alertView merge 이후 반영
-//            addEditView.createAlert(message: "빈칸을 채워주세요")
+            let alert = addEditView.createAlert(message: "빈칸을 채워주세요")
+            present(alert, animated: true, completion: nil)
             return
         }
         
-//        addMember가 잘 작동하는지 테스트 필요
-        memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
+        MemberViewModel.shared.addMember(name: name, imageURL: imageURL, content: content)
+        self.navigationController?.popViewController(animated: true)
     }
 }

@@ -51,7 +51,7 @@ class ImagePickerViewModel: NSObject, UIImagePickerControllerDelegate, UINavigat
                         options: FileOptions(contentType: "image/jpeg")
                     )
 
-                let imageURL = "\(BaseURL.SUPABASE)storage/v1/object/public/\(bucketName)/\(filePath)"
+                let imageURL = "\(BaseURL.SUPABASE)/storage/v1/object/public/\(bucketName)/\(filePath)"
                 DispatchQueue.main.async {
                     self.onImageUpload?(imageURL)
                 }
