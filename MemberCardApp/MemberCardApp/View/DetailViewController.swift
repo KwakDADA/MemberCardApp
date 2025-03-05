@@ -9,7 +9,7 @@ import UIKit
 
 final class DetailViewController: UIViewController {
 
-    private let member: Member
+    private var member: Member
     private let viewModel = MemberViewModel.shared
     
     // 상단 버튼 2개
@@ -68,6 +68,15 @@ final class DetailViewController: UIViewController {
         
         setupUI()
         setupActionButtons()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.fetchMembers()
+        guard let index = viewModel.members.firstIndex(where: { $0.id == member.id }) else { fatalError() }
+        member = viewModel.members[index]
+        memberName.text = member.name
+        contentLabelText.text = member.content
     }
     
     private func setupUI() {
