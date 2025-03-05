@@ -9,6 +9,7 @@ import UIKit
 
 final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
+    
     private let imagePickerViewModel = ImagePickerViewModel()
     private let memberViewModel = MemberViewModel()
     
@@ -37,6 +38,9 @@ final class AddEditViewController: UIViewController {
     }
     
     private func setupUI() {
+        let stackBarButtonItem = UIBarButtonItem(customView: addEditView.buttonStackView)
+        navigationItem.rightBarButtonItem = stackBarButtonItem
+        
         addEditView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
@@ -64,6 +68,7 @@ final class AddEditViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
+        print("저장 버튼 터치")
         guard let imageURL = self.selectedImageURL,
               let name = self.addEditView.nameTextField.text, !name.isEmpty,
               let content = self.addEditView.contentTextView.text, !content.isEmpty else {

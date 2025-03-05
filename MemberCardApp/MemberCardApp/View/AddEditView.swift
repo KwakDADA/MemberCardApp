@@ -123,7 +123,7 @@ final class AddEditView: UIView {
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            buttonStackView.topAnchor.constraint(equalTo: topAnchor, constant: 60),
+            buttonStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             buttonStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
         ])
@@ -133,7 +133,7 @@ final class AddEditView: UIView {
         memberStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            memberStackView.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor, constant: 20),
+            memberStackView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
             memberStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             memberStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
         ])
