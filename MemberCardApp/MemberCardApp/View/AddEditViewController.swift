@@ -11,6 +11,8 @@ final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
     
     private let imagePickerViewModel = ImagePickerViewModel()
+    private let imageLoader = ImageLoader.shared
+    private let memberViewModel = MemberViewModel.shared
     
     var member: Member
     
@@ -74,7 +76,7 @@ final class AddEditViewController: UIViewController {
     }
     
     private func loadImage(from url: URL) {
-        ImageLoader.shared.loadImage(from: url.absoluteString) { [weak self] image in
+        imageLoader.loadImage(from: url.absoluteString) { [weak self] image in
             guard let self = self else { return }
             self.addEditView.profileImageView.image = image
         }
@@ -91,9 +93,9 @@ final class AddEditViewController: UIViewController {
         }
         
         if editMode ?? false {
-            MemberViewModel.shared.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
+            memberViewModel.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
         } else {
-            MemberViewModel.shared.addMember(name: name, imageURL: imageURL, content: content)
+            memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
         }
         self.navigationController?.popViewController(animated: true)
     }
