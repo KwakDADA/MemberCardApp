@@ -47,13 +47,14 @@ final class DetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         // 이미지 로드
-        ImageLoader.shared.loadImage(from: member.imageURL) {
-            guard let image = $0 else {
-                self.imageView.image = UIImage(systemName: "photo")
-                return
-            }
-            self.imageView.image = image
-        }
+//        ImageLoader.shared.loadImage(from: member.imageURL) {
+//            guard let image = $0 else {
+//                self.imageView.image = UIImage(systemName: "photo")
+//                return
+//            }
+//            self.imageView.image = image
+//        }
+        loadImage()
     }
     
     required init?(coder: NSCoder) {
@@ -77,6 +78,7 @@ final class DetailViewController: UIViewController {
         member = viewModel.members[index]
         memberName.text = member.name
         contentLabelText.text = member.content
+        loadImage()
     }
     
     private func setupUI() {
@@ -159,6 +161,16 @@ final class DetailViewController: UIViewController {
         viewModel.deleteMember(id: member.id)
         navigationController?.popViewController(animated: true)
         // dismiss(animated: true)
+    }
+    
+    private func loadImage() {
+        ImageLoader.shared.loadImage(from: member.imageURL) {
+            guard let image = $0 else {
+                self.imageView.image = UIImage(systemName: "photo")
+                return
+            }
+            self.imageView.image = image
+        }
     }
     
     /*
