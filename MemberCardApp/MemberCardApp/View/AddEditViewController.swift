@@ -9,12 +9,16 @@ import UIKit
 
 final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
+    
     private let imagePickerViewModel = ImagePickerViewModel()
-    private let memberViewModel = MemberViewModel()
+    private let imageLoader = ImageLoader.shared
+    private let memberViewModel = MemberViewModel.shared
     
     var member: Member
     
     private var selectedImageURL: String?
+    
+    var editMode: Bool?
     
     init(member: Member){
         self.member = member
@@ -36,12 +40,27 @@ final class AddEditViewController: UIViewController {
         setupImagePicker()
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
     private func setupUI() {
+        let addButton = UIBarButtonItem(customView: addEditView.addButton)
+        navigationItem.rightBarButtonItem = addButton
+        
         addEditView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         addEditView.profileImageView.isUserInteractionEnabled = true
         addEditView.profileImageView.addGestureRecognizer(tapGesture)
+        
+        if !self.member.name.isEmpty || !self.member.imageURL.isEmpty || !self.member.content.isEmpty {
+            self.loadImage(from: URL(string: self.member.imageURL)!)
+            self.addEditView.nameTextField.text = self.member.name
+            self.addEditView.contentTextView.text = self.member.content
+            self.selectedImageURL = self.member.imageURL
+            editMode = true
+        }
     }
     
     private func setupImagePicker() {
@@ -57,7 +76,7 @@ final class AddEditViewController: UIViewController {
     }
     
     private func loadImage(from url: URL) {
-        ImageLoader.shared.loadImage(from: url.absoluteString) { [weak self] image in
+        imageLoader.loadImage(from: url.absoluteString) { [weak self] image in
             guard let self = self else { return }
             self.addEditView.profileImageView.image = image
         }
@@ -67,12 +86,17 @@ final class AddEditViewController: UIViewController {
         guard let imageURL = self.selectedImageURL,
               let name = self.addEditView.nameTextField.text, !name.isEmpty,
               let content = self.addEditView.contentTextView.text, !content.isEmpty else {
-//            alertView merge 이후 반영
-//            addEditView.createAlert(message: "빈칸을 채워주세요")
+            
+            let alert = addEditView.createAlert(message: "빈칸을 채워주세요")
+            present(alert, animated: true, completion: nil)
             return
         }
         
-//        addMember가 잘 작동하는지 테스트 필요
-        memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
+        if editMode ?? false {
+            memberViewModel.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
+        } else {
+            memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
+        }
+        self.navigationController?.popViewController(animated: true)
     }
 }
