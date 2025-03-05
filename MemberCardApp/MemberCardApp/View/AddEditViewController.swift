@@ -37,6 +37,10 @@ final class AddEditViewController: UIViewController {
         setupImagePicker()
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
     private func setupUI() {
         let addButton = UIBarButtonItem(customView: addEditView.addButton)
         navigationItem.rightBarButtonItem = addButton
