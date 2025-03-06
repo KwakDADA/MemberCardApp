@@ -7,34 +7,55 @@
 
 import Foundation
 
-class MemberViewModel {
-    static let shared = MemberViewModel()
+class MemberStore {
+    static let shared = MemberStore()
     
-    private let repository: MemberRepository
+    private init() {}
 
-    init(repository: MemberRepository = MemberRepository()) {
-        self.repository = repository
-    }
-    
-    // 뷰 업데이트를 위한 클로저
-    var onMembersUpdated: (([Member])->Void)?
-    
-    private(set) var members: [Member] = []
-    
-    func fetchMembers() {
-        Task {
-            self.members = await repository.getMembers()
-            onMembersUpdated?(self.members) // members 데이터 변경후 뷰 업데이트 클로저 실행
+    private(set) var members: [Member] = [] {
+        didSet {
+            onMembersUpdated?(members)
         }
     }
     
+    var onMembersUpdated: (([Member]) -> Void)?
+    
+    func updateMembers(_ newMembers: [Member]) {
+        self.members = newMembers
+    }
+}
+
+class MemberViewModel {
+    private let repository: MemberRepository
+    private var store = MemberStore.shared
+    
+    var onMembersUpdated: (([Member]) -> Void)?
+
+    init(repository: MemberRepository = MemberRepository()) {
+        self.repository = repository
+        store.onMembersUpdated = { [weak self] updatedMembers in
+            self?.onMembersUpdated?(updatedMembers)
+        }
+    }
+
+    var members: [Member] {
+        return store.members
+    }
+
+    func fetchMembers() {
+        Task {
+            let fetchedMembers = await repository.getMembers()
+            store.updateMembers(fetchedMembers)
+        }
+    }
+
     func addMember(name: String, imageURL: String, content: String) {
         Task {
             await repository.addMember(name: name, imageURL: imageURL, content: content)
             fetchMembers()
         }
     }
-    
+
     func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) {
         Task {
             let updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
@@ -42,7 +63,7 @@ class MemberViewModel {
             fetchMembers()
         }
     }
-    
+
     func deleteMember(id: UUID) {
         Task {
             await repository.deleteMember(id: id)
@@ -50,3 +71,4 @@ class MemberViewModel {
         }
     }
 }
+
