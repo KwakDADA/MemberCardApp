@@ -31,7 +31,7 @@ MemberCardApp은 팀과 팀원 정보를 관리할 수 있는 애플리케이션
 - 김신영 : 멤버 추가, 수정 뷰 UI
 - 곽다은 : 메인화면 컬렉션뷰 및 커스텀 셀 등 UI 작업
 - 권순욱 : 상세화면 UI 작업
-- 신재욱 : Model, ViewModel, UseCase, Repository 구현, Supabase 연동
+- 신재욱 : Model, ViewModel, Repository 구현, Supabase 연동
 
 ## 기능
 
