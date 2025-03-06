@@ -8,9 +8,6 @@
 import UIKit
 
 class ImageLoader {
-    static let shared = ImageLoader() // 싱글톤 패턴으로 전역에서 하나의 인스턴스만 존재하도록 보장
-    
-    private init() {} // 외부에서 새로운 인스턴스 생성 방지
     
     // 이미지URL을 비동기적으로 받아서 Completion Handler를 통해 UIImage 반환
     func loadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) -> Void {

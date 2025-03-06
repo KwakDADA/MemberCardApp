@@ -11,7 +11,7 @@ final class AddEditViewController: UIViewController {
     private let addEditView = AddEditView()
     
     private let imagePickerViewModel = ImagePickerViewModel()
-    private let imageLoader = ImageLoader.shared
+    private let imageLoader = ImageLoader()
     private let memberViewModel = MemberViewModel.shared
     
     var member: Member

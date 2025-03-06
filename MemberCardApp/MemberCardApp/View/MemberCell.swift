@@ -9,7 +9,7 @@ import UIKit
 
 final class MemberCell: UICollectionViewCell {
     
-    let imageLoader = ImageLoader.shared
+    let imageLoader = ImageLoader()
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
