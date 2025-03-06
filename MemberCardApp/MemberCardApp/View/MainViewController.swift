@@ -9,30 +9,44 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
+    // MARK: - Properties
     private var viewModel = MemberViewModel.shared
-    private lazy var teamCollectionView: TeamCollectionView = .init()
     private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
-    private var sections = [MainSection]()
+    private var sections: [MainSection] = []
+    
+    // MARK: - View
+    private lazy var teamCollectionView: TeamCollectionView = .init()
     
     override func loadView() {
         view = teamCollectionView
     }
     
+    // MARK: - LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        teamCollectionView.collectionView.delegate = self
+        
+        setupView()
+        setupDelegate()
         configureDataSource()
         bindViewModel()
-        viewModel.fetchMembers()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewModel.fetchMembers()
     }
     
+    // MARK: - Methods
+    private func setupView() {
+        view.backgroundColor = .white
+    }
+    
+    private func setupDelegate() {
+        teamCollectionView.collectionView.delegate = self
+    }
+    
+    // 뷰모델의 멤버 데이터가 갱신되면 컬렉션뷰 스냅샷 업데이트
     private func bindViewModel() {
         viewModel.onMembersUpdated = { [weak self] members in
             DispatchQueue.main.async {
@@ -42,12 +56,15 @@ final class MainViewController: UIViewController {
     }
 }
 
+// MARK: - UICollectionViewDelegate
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource?.itemIdentifier(for: indexPath),
               case let .member(member) = item else { return }
         
-        if indexPath.row == viewModel.members.count {
+        let isLastItem = indexPath.row == viewModel.members.count
+        
+        if isLastItem {
             self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
         } else {
             self.navigationController?.pushViewController(DetailViewController(member: member),animated: true)
