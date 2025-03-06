@@ -11,17 +11,17 @@ import XCTest
 class MemberViewModelTests: XCTestCase {
     
     var viewModel: MemberViewModel!
-    var mockUseCase: MockMemberUseCase!
+    var mockRepository: MockMemberRepository!
     
     override func setUp() {
         super.setUp()
-        mockUseCase = MockMemberUseCase()
-        viewModel = MemberViewModel(useCase: mockUseCase)
+        mockRepository = MockMemberRepository()
+        viewModel = MemberViewModel(repository: mockRepository)
     }
     
     override func tearDown() {
         viewModel = nil
-        mockUseCase = nil
+        mockRepository = nil
         super.tearDown()
     }
     
@@ -29,7 +29,7 @@ class MemberViewModelTests: XCTestCase {
          // Given
          let member1 = Member(id: UUID(), name: "Alice", imageURL: "url1", content: "content1")
          let member2 = Member(id: UUID(), name: "Bob", imageURL: "url2", content: "content2")
-         mockUseCase.mockMembers = [member1, member2]
+        mockRepository.mockMembers = [member1, member2]
          
          let expectation = XCTestExpectation(description: "Fetch members")
          
@@ -66,7 +66,7 @@ class MemberViewModelTests: XCTestCase {
      func testUpdateMember() async {
          // Given
          let member = Member(id: UUID(), name: "David", imageURL: "url4", content: "content4")
-         mockUseCase.mockMembers = [member]
+         mockRepository.mockMembers = [member]
          
          let expectation = XCTestExpectation(description: "Update member")
          
@@ -85,7 +85,7 @@ class MemberViewModelTests: XCTestCase {
      func testDeleteMember() async {
          // Given
          let member = Member(id: UUID(), name: "Eve", imageURL: "url5", content: "content5")
-         mockUseCase.mockMembers = [member]
+         mockRepository.mockMembers = [member]
          
          let expectation = XCTestExpectation(description: "Delete member")
          
