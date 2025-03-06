@@ -48,7 +48,7 @@ final class DetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         // 멤버 이미지 로드
-        loadImage()
+        loadImage(into: imageView, from: member.imageURL)
     }
     
     required init?(coder: NSCoder) {
@@ -71,7 +71,7 @@ final class DetailViewController: UIViewController {
         member = viewModel.members[index]
         memberName.text = member.name
         contentText.text = member.content
-        loadImage()
+        loadImage(into: imageView, from: member.imageURL)
     }
     
     private func setupUI() {
@@ -155,16 +155,5 @@ final class DetailViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }
-    
-    private func loadImage() {
-        imageLoader.loadImage(from: member.imageURL) {
-            // 이미지 로딩 실패 시 시스템 이미지 로드
-            guard let image = $0 else {
-                self.imageView.image = UIImage(systemName: "photo")
-                return
-            }
-            self.imageView.image = image
-        }
-    }
-    
+        
 }
