@@ -23,18 +23,17 @@ final class DetailViewController: UIViewController {
         return imageView
     }()
     
-    // 하단 소제목
+    // 하단 멤버 이름 정보 뷰(제목, 내용)
     private lazy var nameLabel = makeLabel(title: "이름")
-    private lazy var contentLabel = makeLabel(title: "내용")
-    
-    // 하단 내용
     private lazy var memberName: UILabel = {
         let label = UILabel()
         label.text = member.name
         return label
     }()
     
-    private lazy var contentLabelText: UILabel = {
+    // 하단 멤버 소개내용 정보 뷰(제목, 내용)
+    private lazy var contentLabel = makeLabel(title: "내용")
+    private lazy var contentText: UILabel = {
         let label = UILabel()
         label.text = member.content
         label.numberOfLines = 0
@@ -45,7 +44,7 @@ final class DetailViewController: UIViewController {
         self.member = member
         super.init(nibName: nil, bundle: nil)
         
-        // 이미지 로드
+        // 멤버 이미지 로드
         loadImage()
     }
     
@@ -55,21 +54,20 @@ final class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         view.backgroundColor = .white
         
         setupUI()
         setupActionButtons()
     }
     
+    // AddEditViewController에서 편집을 마치고 돌아오면, 새 정보 로드하여 뷰에 반영
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.fetchMembers()
         guard let index = viewModel.members.firstIndex(where: { $0.id == member.id }) else { fatalError() }
         member = viewModel.members[index]
         memberName.text = member.name
-        contentLabelText.text = member.content
+        contentText.text = member.content
         loadImage()
     }
     
@@ -79,9 +77,8 @@ final class DetailViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         
-        // 버튼 스택 뷰 -> 내비게이션 바 버튼
-        let spacer = UIView()
-        let buttonStackView = UIStackView(arrangedSubviews: [spacer, deleteButton, editButton])
+        // 버튼 스택 뷰(내비게이션 바 버튼)
+        let buttonStackView = UIStackView(arrangedSubviews: [deleteButton, editButton])
         buttonStackView.axis = .horizontal
         buttonStackView.alignment = .trailing
         buttonStackView.spacing = 8
@@ -90,14 +87,11 @@ final class DetailViewController: UIViewController {
         navigationItem.rightBarButtonItem = stackBarButtonItem
         
         // 화면 전체 스택 뷰
-        let stackViewSpacer = UIView()
-        let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, memberName, contentLabel, contentLabelText, stackViewSpacer])
-        
+        let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, memberName, contentLabel, contentText])
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        // view.addSubview(stackView)
         scrollView.addSubview(stackView)
         
         // 오토 레이아웃
@@ -113,12 +107,26 @@ final class DetailViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -20),
             stackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -40),
             
-            buttonStackView.heightAnchor.constraint(equalToConstant: 50),
-            imageView.heightAnchor.constraint(equalToConstant: 200),
-            
+            imageView.heightAnchor.constraint(equalToConstant: 300),
         ])
     }
     
+    // MARK: - 액션 버튼
+    private func setupActionButtons() {
+        editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func editButtonTapped() {
+        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
+    }
+    
+    @objc private func deleteButtonTapped() {
+        viewModel.deleteMember(id: member.id)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    // MARK: - 헬퍼 메서드
     private func makeButton(title: String) -> UIButton {
         let button = UIButton(configuration: .tinted())
         button.setTitle(title, for: .normal)
@@ -138,24 +146,9 @@ final class DetailViewController: UIViewController {
         return label
     }
     
-    private func setupActionButtons() {
-        editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc private func editButtonTapped() {
-        print("editButton tapped.")
-        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
-    }
-    
-    @objc private func deleteButtonTapped() {
-        print("deleteButton tapped.")
-        viewModel.deleteMember(id: member.id)
-        navigationController?.popViewController(animated: true)
-    }
-    
     private func loadImage() {
         ImageLoader.shared.loadImage(from: member.imageURL) {
+            // 이미지 로딩 실패 시 시스템 이미지 로드
             guard let image = $0 else {
                 self.imageView.image = UIImage(systemName: "photo")
                 return
