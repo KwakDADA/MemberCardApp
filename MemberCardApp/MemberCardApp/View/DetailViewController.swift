@@ -10,8 +10,8 @@ import UIKit
 final class DetailViewController: UIViewController {
 
     private var member: Member
-    private let viewModel = MemberViewModel()
-    
+    private let viewModel: MemberViewModel
+
     // 상단 버튼 2개
     private lazy var deleteButton = makeButton(title: "삭제")
     private lazy var editButton = makeButton(title: "편집")
@@ -43,12 +43,12 @@ final class DetailViewController: UIViewController {
         return label
     }()
     
-    init(member: Member) {
+    init(member: Member, viewModel: MemberViewModel) {
         self.member = member
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        
-        // 멤버 이미지 로드
         loadImage(into: imageView, from: member.imageURL)
+
     }
     
     required init?(coder: NSCoder) {
@@ -73,6 +73,7 @@ final class DetailViewController: UIViewController {
         contentText.text = member.content
         loadImage(into: imageView, from: member.imageURL)
     }
+ 
     
     private func setupUI() {
         // 스크롤 뷰
@@ -117,7 +118,7 @@ final class DetailViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
-        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
+        self.navigationController?.pushViewController(AddEditViewController(member: member, viewModel: viewModel),animated: true)
     }
     
     @objc private func deleteButtonTapped() {

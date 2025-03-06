@@ -7,45 +7,26 @@
 
 import Foundation
 
-class MemberStore {
-    static let shared = MemberStore()
-    
-    private init() {}
+class MemberViewModel {
+    private let repository: MemberRepository
 
     private(set) var members: [Member] = [] {
         didSet {
             onMembersUpdated?(members)
         }
     }
-    
-    var onMembersUpdated: (([Member]) -> Void)?
-    
-    func updateMembers(_ newMembers: [Member]) {
-        self.members = newMembers
-    }
-}
 
-class MemberViewModel {
-    private let repository: MemberRepository
-    private var store = MemberStore.shared
-    
     var onMembersUpdated: (([Member]) -> Void)?
 
     init(repository: MemberRepository = MemberRepository()) {
         self.repository = repository
-        store.onMembersUpdated = { [weak self] updatedMembers in
-            self?.onMembersUpdated?(updatedMembers)
-        }
     }
 
-    var members: [Member] {
-        return store.members
-    }
-
+    
     func fetchMembers() {
         Task {
-            let fetchedMembers = await repository.getMembers()
-            store.updateMembers(fetchedMembers)
+            self.members = await repository.getMembers()
+            onMembersUpdated?(self.members)
         }
     }
 
@@ -71,4 +52,3 @@ class MemberViewModel {
         }
     }
 }
-
