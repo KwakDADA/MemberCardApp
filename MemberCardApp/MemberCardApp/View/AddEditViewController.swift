@@ -13,8 +13,6 @@ final class AddEditViewController: UIViewController {
     
     // 이미지 선택 및 업로드를 위한 뷰 모델
     private let imagePickerViewModel = ImagePickerViewModel()
-    // 이미지 로더 인스턴스 생성
-    private let imageLoader = ImageLoader()
     // 회원 정보를 관리하는 뷰 모델
     private let memberViewModel = MemberViewModel.shared
     
@@ -70,7 +68,7 @@ final class AddEditViewController: UIViewController {
         
         // 아래 코드는 변경 예정
         if !self.member.name.isEmpty || !self.member.imageURL.isEmpty || !self.member.content.isEmpty {
-            self.loadImage(from: URL(string: self.member.imageURL)!)
+            loadImage(into: self.addEditView.profileImageView, from: self.member.imageURL)
             self.addEditView.nameTextField.text = self.member.name
             self.addEditView.contentTextView.text = self.member.content
             self.selectedImageURL = self.member.imageURL
@@ -85,19 +83,10 @@ final class AddEditViewController: UIViewController {
         
         // 뷰 모델에 선언된 클로저 속성 이곳에 구현
         imagePickerViewModel.onImageUpload = { [weak self] imageURL in
-            guard let self = self, let imageURL = imageURL, let url = URL(string: imageURL) else { return }
+            guard let self = self, let imageURL = imageURL else { return }
             // 선택한 이미지 주소 저장
             self.selectedImageURL = imageURL
-            // 선택한 이미지 로드
-            self.loadImage(from: url)
-        }
-    }
-    
-    private func loadImage(from url: URL) {
-        imageLoader.loadImage(from: url.absoluteString) { [weak self] image in
-            guard let self = self else { return }
-            // 선택한 이미지 보이게 설정
-            self.addEditView.profileImageView.image = image
+            loadImage(into: self.addEditView.profileImageView, from: self.selectedImageURL!)
         }
     }
     
