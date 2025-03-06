@@ -32,7 +32,7 @@ final class MainViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewWillAppear(animated)
         
         viewModel.fetchMembers()
     }
@@ -54,6 +54,11 @@ final class MainViewController: UIViewController {
             }
         }
     }
+    
+    // 전달된 indexPath가 '멤버추가' 셀(멤버 목록의 마지막 위치)인지 판별
+    private func isAddMemberCell(indexPath: IndexPath) -> Bool {
+        indexPath.row == viewModel.members.count
+    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -64,10 +69,7 @@ extension MainViewController: UICollectionViewDelegate {
         guard let item = dataSource?.itemIdentifier(for: indexPath),
               case let .member(member) = item else { return }
         
-        let isLastItem = indexPath.row == viewModel.members.count
-        
-        if isLastItem {
-            self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
+        if isAddMemberCell(indexPath: indexPath) {
             // 멤버 추가 화면으로 이동
             self.navigationController?.pushViewController(
                 AddEditViewController(member: member),
@@ -120,6 +122,7 @@ extension MainViewController {
             
         case .memberCard:
             // 만약 마지막 멤버 셀이면 'AddMemberCell'을 반환
+            if isAddMemberCell(indexPath: indexPath) {
                 let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: ReuseIdentifier.addMemberCell,
                     for: indexPath
