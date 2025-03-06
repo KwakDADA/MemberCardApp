@@ -10,7 +10,7 @@ import UIKit
 final class MainViewController: UIViewController {
     
     // MARK: - Properties
-    private var viewModel = MemberViewModel.shared
+    private var viewModel = MemberViewModel()
     var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
     var sections: [MainSection] = []
     
@@ -49,6 +49,7 @@ final class MainViewController: UIViewController {
     // 뷰모델의 멤버 데이터가 갱신되면 컬렉션뷰 스냅샷 업데이트
     private func bindViewModel() {
         viewModel.onMembersUpdated = { [weak self] members in
+            print("onMembersUpdated 호출됨") // 디버깅용
             DispatchQueue.main.async {
                 self?.updateSnapshot(with: members)
             }
@@ -72,13 +73,13 @@ extension MainViewController: UICollectionViewDelegate {
         if isAddMemberCell(indexPath: indexPath) {
             // 멤버 추가 화면으로 이동
             self.navigationController?.pushViewController(
-                AddEditViewController(member: member),
+                AddEditViewController(member: member, viewModel: viewModel),
                 animated: true
             )
         } else {
             // 선택한 멤버 상세화면으로 이동
             self.navigationController?.pushViewController(
-                DetailViewController(member: member),
+                DetailViewController(member: member, viewModel: viewModel),
                 animated: true
             )
         }

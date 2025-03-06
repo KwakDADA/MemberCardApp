@@ -16,7 +16,13 @@ final class AddEditViewController: UIViewController {
     // 이미지 로더 인스턴스 생성
     private let imageLoader = ImageLoader()
     // 회원 정보를 관리하는 뷰 모델
-    private let memberViewModel = MemberViewModel.shared
+    private let viewModel: MemberViewModel
+    
+    init(member: Member, viewModel: MemberViewModel) {
+        self.member = member
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
     
     var member: Member
     
@@ -25,12 +31,6 @@ final class AddEditViewController: UIViewController {
     
     // 삭제 예정
     var editMode: Bool?
-    
-    // member 객체를 전달받아 초기화
-    init(member: Member){
-        self.member = member
-        super.init(nibName: nil, bundle: nil)
-    }
     
     // 스토리보드 X
     required init?(coder: NSCoder) {
@@ -114,11 +114,10 @@ final class AddEditViewController: UIViewController {
         
         // 기존에 멤버가 존재하면 업데이트, 아닐경우 새로 추가
         if editMode ?? false {
-            memberViewModel.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
+            viewModel.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
         } else {
-            memberViewModel.addMember(name: name, imageURL: imageURL, content: content)
+            viewModel.addMember(name: name, imageURL: imageURL, content: content)
         }
-        
         // 이전 화면으로 이동
         self.navigationController?.popViewController(animated: true)
     }
