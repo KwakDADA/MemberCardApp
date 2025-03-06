@@ -75,31 +75,47 @@ extension MainViewController: UICollectionViewDelegate {
 // MARK: - DiffableDataSource
 extension MainViewController {
     private func configureDataSource() {
-        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
-            guard let self = self else { return nil }
-            let sections = self.sections[indexPath.section]
+        dataSource = createDataSource()
+        
+        createSupplementaryViewProvider()
+        
+        applyInitialSnapshot()
+    }
+    
+    private func createDataSource() -> UICollectionViewDiffableDataSource<MainSection, MainItem> {
+        let dataSource = UICollectionViewDiffableDataSource<MainSection, MainItem>(
+            collectionView: teamCollectionView.collectionView) { [weak self] collectionView, indexPath, item in
+                self?.makeCell(collectionView: collectionView, indexPath: indexPath, item: item)
+            }
+        return dataSource
+    }
+    
+    private func makeCell(collectionView: UICollectionView, indexPath: IndexPath, item: MainItem) -> UICollectionViewCell? {
+        let sections = self.sections[indexPath.section]
+        
+        switch sections {
+        case .teamInfo:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
             
-            switch sections {
-            case .teamInfo:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
+            return cell
+        case .memberCard:
+            if indexPath.row == self.viewModel.members.count {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.addMemberCell, for: indexPath) as! AddMemberCell
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
+                
+                guard let member = item.member else { return cell }
+                cell.configureCell(withMember: member)
                 
                 return cell
-            case .memberCard:
-                if indexPath.row == self.viewModel.members.count {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.addMemberCell, for: indexPath) as! AddMemberCell
-                    return cell
-                } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
-                    
-                    guard let member = item.member else { return cell }
-                    cell.configureCell(withMember: member)
-                    
-                    return cell
-                }
             }
-        })
-        
-        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath -> UICollectionReusableView? in
+        }
+    }
+    
+    private func createSupplementaryViewProvider() {
+        dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
+            guard let self else { return nil }
             switch kind {
             case SupplementaryViewKind.header:
                 let section = self.sections[indexPath.section]
@@ -124,7 +140,9 @@ extension MainViewController {
                 return nil
             }
         }
-        
+    }
+    
+    private func applyInitialSnapshot() {
         var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
         initialSnapshot.appendSections([.teamInfo, .memberCard])
         initialSnapshot.appendItems([.team], toSection: .teamInfo)
