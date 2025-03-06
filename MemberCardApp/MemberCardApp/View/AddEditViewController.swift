@@ -14,11 +14,10 @@ final class AddEditViewController: UIViewController {
     // 이미지 선택 및 업로드를 위한 뷰 모델
     private let imagePickerViewModel = ImagePickerViewModel()
     // 회원 정보를 관리하는 뷰 모델
-    private let viewModel: MemberViewModel
+    private let viewModel = MemberViewModel()
     
-    init(member: Member, viewModel: MemberViewModel) {
+    init(member: Member) {
         self.member = member
-        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     

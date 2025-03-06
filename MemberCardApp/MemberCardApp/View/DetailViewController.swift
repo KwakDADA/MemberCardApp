@@ -14,7 +14,7 @@ struct NotificationName {
 final class DetailViewController: UIViewController {
 
     private var member: Member
-    private let viewModel: MemberViewModel
+    private let viewModel = MemberViewModel()
 
     // 상단 버튼 2개
     private lazy var deleteButton = makeButton(title: "삭제")
@@ -47,9 +47,8 @@ final class DetailViewController: UIViewController {
         return label
     }()
     
-    init(member: Member, viewModel: MemberViewModel) {
+    init(member: Member) {
         self.member = member
-        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         loadImage(into: imageView, from: member.imageURL)
 
@@ -67,7 +66,6 @@ final class DetailViewController: UIViewController {
         setupActionButtons()
     }
     
-    // AddEditViewController에서 편집을 마치고 돌아오면, 새 정보 로드하여 뷰에 반영
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -127,7 +125,7 @@ final class DetailViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
-        self.navigationController?.pushViewController(AddEditViewController(member: member, viewModel: viewModel),animated: true)
+        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
     }
     
     @objc private func deleteButtonTapped() {
