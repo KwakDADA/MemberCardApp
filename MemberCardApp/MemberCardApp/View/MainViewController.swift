@@ -9,30 +9,44 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
+    // MARK: - Properties
     private var viewModel = MemberViewModel.shared
-    private lazy var teamCollectionView: TeamCollectionView = .init()
-    private var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
-    private var sections = [MainSection]()
+    var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
+    var sections: [MainSection] = []
+    
+    // MARK: - View
+    lazy var teamCollectionView: TeamCollectionView = .init()
     
     override func loadView() {
         view = teamCollectionView
     }
     
+    // MARK: - LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        teamCollectionView.collectionView.delegate = self
+        
+        setupView()
+        setupDelegate()
         configureDataSource()
         bindViewModel()
-        viewModel.fetchMembers()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         viewModel.fetchMembers()
     }
     
+    // MARK: - Methods
+    private func setupView() {
+        view.backgroundColor = .white
+    }
+    
+    private func setupDelegate() {
+        teamCollectionView.collectionView.delegate = self
+    }
+    
+    // 뷰모델의 멤버 데이터가 갱신되면 컬렉션뷰 스냅샷 업데이트
     private func bindViewModel() {
         viewModel.onMembersUpdated = { [weak self] members in
             DispatchQueue.main.async {
@@ -40,95 +54,33 @@ final class MainViewController: UIViewController {
             }
         }
     }
+    
+    // 전달된 indexPath가 '멤버추가' 셀(멤버 목록의 마지막 위치)인지 판별
+    func isAddMemberCell(indexPath: IndexPath) -> Bool {
+        indexPath.row == viewModel.members.count
+    }
 }
 
+// MARK: - UICollectionViewDelegate
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 데이터소스에서 현재 셀에 해당하는 MainItem을 가져오고,
+        // 그것이 .member(Member) 타입인지 확인
         guard let item = dataSource?.itemIdentifier(for: indexPath),
               case let .member(member) = item else { return }
         
-        if indexPath.row == viewModel.members.count {
-            self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
+        if isAddMemberCell(indexPath: indexPath) {
+            // 멤버 추가 화면으로 이동
+            self.navigationController?.pushViewController(
+                AddEditViewController(member: member),
+                animated: true
+            )
         } else {
-            self.navigationController?.pushViewController(DetailViewController(member: member),animated: true)
+            // 선택한 멤버 상세화면으로 이동
+            self.navigationController?.pushViewController(
+                DetailViewController(member: member),
+                animated: true
+            )
         }
-    }
-}
-
-// MARK: - DiffableDataSource
-extension MainViewController {
-    private func configureDataSource() {
-        dataSource = .init(collectionView: teamCollectionView.collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
-            guard let self = self else { return nil }
-            let sections = self.sections[indexPath.section]
-            
-            switch sections {
-            case .teamInfo:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.teamCell, for: indexPath) as! TeamCell
-                
-                return cell
-            case .memberCard:
-                if indexPath.row == self.viewModel.members.count {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.addMemberCell, for: indexPath) as! AddMemberCell
-                    return cell
-                } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier.memberCell, for: indexPath) as! MemberCell
-                    
-                    guard let member = item.member else { return cell }
-                    cell.configureCell(withMember: member)
-                    
-                    return cell
-                }
-            }
-        })
-        
-        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath -> UICollectionReusableView? in
-            switch kind {
-            case SupplementaryViewKind.header:
-                let section = self.sections[indexPath.section]
-                let sectionTitle: String
-                
-                switch section {
-                case .teamInfo:
-                    sectionTitle = MainHeaderTitle.team
-                case .memberCard:
-                    sectionTitle = MainHeaderTitle.member
-                }
-                
-                let headerView = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: SupplementaryViewKind.header,
-                    withReuseIdentifier: ReuseIdentifier.mainHeaderView,
-                    for: indexPath) as! MainHeaderView
-                headerView.configureHeader(withTitle: sectionTitle)
-                
-                return headerView
-                
-            default:
-                return nil
-            }
-        }
-        
-        var initialSnapshot = NSDiffableDataSourceSnapshot<MainSection, MainItem>()
-        initialSnapshot.appendSections([.teamInfo, .memberCard])
-        initialSnapshot.appendItems([.team], toSection: .teamInfo)
-        
-        sections = initialSnapshot.sectionIdentifiers
-        teamCollectionView.sections = sections
-        dataSource?.apply(initialSnapshot, animatingDifferences: true)
-    }
-    
-    private func updateSnapshot(with members: [Member]) {
-        guard let dataSource = self.dataSource else { return }
-        
-        var snapshot = dataSource.snapshot()
-        
-        let previousItems = snapshot.itemIdentifiers(inSection: .memberCard)
-        snapshot.deleteItems(previousItems)
-        
-        let memberItems = members.map { MainItem.member($0) }
-        snapshot.appendItems(memberItems, toSection: .memberCard)
-        snapshot.appendItems([.member(Member(id: UUID(), name: "", imageURL: "", content: ""))])
-        
-        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
