@@ -115,6 +115,8 @@ final class AddEditViewController: UIViewController {
         // 기존에 멤버가 존재하면 업데이트, 아닐경우 새로 추가
         if editMode ?? false {
             viewModel.updateMember(id: self.member.id, name: name, imageURL: imageURL, content: content)
+            // 바뀐 데이터 먼저 직접 전달
+            NotificationCenter.default.post(name: NotificationName.editDone, object: Member(id: member.id, name: name, imageURL: imageURL, content: content))
         } else {
             viewModel.addMember(name: name, imageURL: imageURL, content: content)
         }
