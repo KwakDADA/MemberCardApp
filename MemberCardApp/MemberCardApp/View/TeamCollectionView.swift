@@ -55,6 +55,7 @@ final class TeamCollectionView: UIView {
         collectionView.register(MemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.memberCell)
         collectionView.register(AddMemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.addMemberCell)
         collectionView.register(MainHeaderView.self, forSupplementaryViewOfKind: SupplementaryViewKind.header, withReuseIdentifier: ReuseIdentifier.mainHeaderView)
+        collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -63,7 +64,6 @@ final class TeamCollectionView: UIView {
     override init(frame: CGRect) {
         super.init(frame: .zero)
         
-        collectionView.backgroundColor = .white
         setAddView()
         setConstraint()
     }
