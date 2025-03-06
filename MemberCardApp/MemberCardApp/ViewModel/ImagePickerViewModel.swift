@@ -12,21 +12,30 @@ class ImagePickerViewModel: NSObject, UIImagePickerControllerDelegate, UINavigat
     let imagePicker = UIImagePickerController()
     var onImageUpload: ((String?) -> Void)?
 
-    override init() {
-        super.init()
+    private let repository: ImageRepository
+
+    init(repository: ImageRepository = ImageRepository()) {
+         self.repository = repository
+         super.init()
+         setupImagePicker()
+    }
+    
+    private func setupImagePicker() {
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = true
     }
     
+    // 엘범 보여주기
     func presentImagePicker(from viewController: UIViewController) {
         viewController.present(imagePicker, animated: true, completion: nil)
     }
     
+    // 엘범에서 사진을 선택했을때에 대한 이벤트 처리(이미지 업로드)
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
             print("선택된 이미지: \(selectedImage)")
-            uploadImageToSupabase(selectedImage)
+            uploadImage(selectedImage)
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -35,35 +44,13 @@ class ImagePickerViewModel: NSObject, UIImagePickerControllerDelegate, UINavigat
         picker.dismiss(animated: true, completion: nil)
     }
     
-    func uploadImageToSupabase(_ image: UIImage) {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
-        
-        let filePath = "uploads/\(UUID().uuidString).jpg"
-        let bucketName = "Images"
-
+    // 이미지 업로드 메서드 
+    func uploadImage(_ image: UIImage) {
         Task {
-            do {
-                try await SupabaseManager.shared.client.storage
-                    .from(bucketName)
-                    .upload(
-                        filePath,
-                        data: imageData,
-                        options: FileOptions(contentType: "image/jpeg")
-                    )
-
-                let imageURL = "\(BaseURL.SUPABASE)/storage/v1/object/public/\(bucketName)/\(filePath)"
-                DispatchQueue.main.async {
-                    self.onImageUpload?(imageURL)
-                }
-                print("이미지 업로드 성공: \(imageURL)")
-            } catch {
-                DispatchQueue.main.async {
-                    self.onImageUpload?(nil)
-                }
-                print("이미지 업로드 실패: \(error)")
+            let imageURL = try? await repository.uploadImage(image)
+            DispatchQueue.main.async {
+                self.onImageUpload?(imageURL)
             }
         }
     }
-    
-    
 }

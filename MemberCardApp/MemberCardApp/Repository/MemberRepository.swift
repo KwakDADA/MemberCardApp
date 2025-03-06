@@ -8,6 +8,8 @@
 import Foundation
 
 class MemberRepository {
+    
+    // Supabase에서 멤버 리스트 가져오기
     func getMembers() async -> [Member] {
         do {
             let users: [Member] = try await SupabaseManager.shared.client
@@ -17,20 +19,20 @@ class MemberRepository {
                 .value
             print("유저 목록: \(users)")
             return users
-            
         } catch {
             print("데이터 가져오기 실패: \(error)")
             return []
         }
     }
     
+    // Supabase에 멤버 추가
     func addMember(name: String, imageURL: String, content: String) async {
-        let newUser = ["name": name, "imageURL": imageURL, "content": content]
+        let newMember = ["name": name, "imageURL": imageURL, "content": content]
         
         do {
             try await SupabaseManager.shared.client
                 .from("members")
-                .insert(newUser)
+                .insert(newMember)
                 .execute()
             
             print("유저 추가 성공")
@@ -39,6 +41,7 @@ class MemberRepository {
         }
     }
     
+    // Supabase 특정 멤버 업데이트
     func updateMember(id: UUID, data: UpdateMemberData) async {
         do {
             try await SupabaseManager.shared.client
@@ -53,6 +56,7 @@ class MemberRepository {
         }
     }
     
+    // Supabase 특정 멤버 삭제
     func deleteMember(id: UUID) async {
         do {
             try await SupabaseManager.shared.client
