@@ -10,7 +10,7 @@ import UIKit
 final class DetailViewController: UIViewController {
 
     private var member: Member
-    private let viewModel = MemberViewModel.shared
+    private let viewModel = MemberViewModel()
     
     // 상단 버튼 2개
     private lazy var deleteButton = makeButton(title: "삭제")

@@ -10,7 +10,7 @@ import UIKit
 final class MainViewController: UIViewController {
     
     // MARK: - Properties
-    private var viewModel = MemberViewModel.shared
+    private var viewModel = MemberViewModel()
     var dataSource: UICollectionViewDiffableDataSource<MainSection, MainItem>?
     var sections: [MainSection] = []
     

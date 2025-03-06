@@ -16,7 +16,7 @@ final class AddEditViewController: UIViewController {
     // 이미지 로더 인스턴스 생성
     private let imageLoader = ImageLoader()
     // 회원 정보를 관리하는 뷰 모델
-    private let memberViewModel = MemberViewModel.shared
+    private let memberViewModel = MemberViewModel()
     
     var member: Member
     
