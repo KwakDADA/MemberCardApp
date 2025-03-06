@@ -9,8 +9,10 @@ import UIKit
 
 final class MemberCell: UICollectionViewCell {
     
+    // MARK: - Properties
     let imageLoader = ImageLoader()
     
+    // MARK: - Components
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -36,6 +38,7 @@ final class MemberCell: UICollectionViewCell {
         return label
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -47,6 +50,7 @@ final class MemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setAddView() {
         addSubview(profileImageView)
         

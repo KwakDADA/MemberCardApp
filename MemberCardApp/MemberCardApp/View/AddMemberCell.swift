@@ -9,6 +9,7 @@ import UIKit
 
 final class AddMemberCell: UICollectionViewCell {
     
+    // MARK: - Components
     private let addImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -18,6 +19,7 @@ final class AddMemberCell: UICollectionViewCell {
         return imageView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -30,6 +32,7 @@ final class AddMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setUI() {
         layer.cornerRadius = 10
         clipsToBounds = true

@@ -8,6 +8,8 @@
 import UIKit
 
 final class MainHeaderView: UICollectionReusableView {
+    
+    // MARK: - Components
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -16,6 +18,7 @@ final class MainHeaderView: UICollectionReusableView {
         return label
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -27,6 +30,7 @@ final class MainHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setAddViews() {
         addSubview(titleLabel)
     }

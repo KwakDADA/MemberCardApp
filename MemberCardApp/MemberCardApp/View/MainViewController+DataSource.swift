@@ -124,7 +124,7 @@ extension MainViewController {
         let memberItems = members.map { MainItem.member($0) }
         snapshot.appendItems(memberItems, toSection: .memberCard)
         
-        // 최신 멤버 배열을 MainItem.member 타입으로 변환한 뒤 섹션에 추가
+        // 맨 마지막에 '멤버 추가'용 아이템을 추가 (AddMemberCell로 표시됨)
         snapshot.appendItems([.member(Member(id: UUID(), name: "", imageURL: "", content: ""))])
         
         // 변경된 스냅샷을 적용해 화면에 반영

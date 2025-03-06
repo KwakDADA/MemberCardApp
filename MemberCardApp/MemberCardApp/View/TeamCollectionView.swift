@@ -45,22 +45,25 @@ enum MainHeaderTitle {
 
 final class TeamCollectionView: UIView {
     
+    // MARK: - Properties
     var sections: [MainSection]?
 
+    // MARK: - Components
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(TeamCell.self, forCellWithReuseIdentifier: ReuseIdentifier.teamCell)
         collectionView.register(MemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.memberCell)
         collectionView.register(AddMemberCell.self, forCellWithReuseIdentifier: ReuseIdentifier.addMemberCell)
         collectionView.register(MainHeaderView.self, forSupplementaryViewOfKind: SupplementaryViewKind.header, withReuseIdentifier: ReuseIdentifier.mainHeaderView)
+        collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: .zero)
         
-        collectionView.backgroundColor = .white
         setAddView()
         setConstraint()
     }
@@ -69,6 +72,7 @@ final class TeamCollectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setAddView() {
         addSubview(collectionView)
     }
@@ -88,59 +92,74 @@ final class TeamCollectionView: UIView {
             guard let self = self,
                   let sections = self.sections else { return nil }
             let section = sections[sectionIndex]
-            
-            let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50))
-            let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemSize, elementKind: SupplementaryViewKind.header, alignment: .top)
+
+            let headerItem = createHeaderItem()
             
             switch section {
             case .teamInfo:
-                let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .estimated(100)
-                )
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .estimated(100)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: groupSize,
-                    subitems: [item]
-                )
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
-                section.boundarySupplementaryItems = [headerItem]
-                
-                return section
+                return self.createTeamInfoSection(supplementaryItems: [headerItem])
                 
             case .memberCard:
-                let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .absolute(400)
-                )
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(0.92),
-                    heightDimension: .absolute(400)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: groupSize,
-                    subitems: [item]
-                )
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 20, leading: 0, bottom: 40, trailing: 0)
-                section.interGroupSpacing = 8
-                section.orthogonalScrollingBehavior = .groupPagingCentered
-                section.boundarySupplementaryItems = [headerItem]
-                
-                return section
+                return self.createMemberCardSection(supplementaryItems: [headerItem])
             }
         }
         
         return layout
+    }
+    
+    private func createHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let headerItemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(50)
+        )
+        let headerItem = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerItemSize,
+            elementKind: SupplementaryViewKind.header,
+            alignment: .top
+        )
+        
+        return headerItem
+    }
+    
+    private func createTeamInfoSection(supplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem]) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(100)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(100)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
+        section.boundarySupplementaryItems = supplementaryItems
+        
+        return section
+    }
+    
+    private func createMemberCardSection(supplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem]) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .absolute(400)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.92),
+            heightDimension: .absolute(400)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 0, bottom: 40, trailing: 0)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.boundarySupplementaryItems = supplementaryItems
+        
+        return section
     }
 }
