@@ -31,7 +31,7 @@ MemberCardApp은 팀과 팀원 정보를 관리할 수 있는 애플리케이션
 - 김신영 : 멤버 추가, 수정 뷰 UI
 - 곽다은 : 메인화면 컬렉션뷰 및 커스텀 셀 등 UI 작업
 - 권순욱 : 상세화면 UI 작업
-- 신재욱 : Model, ViewModel, UseCase, Repository 구현, Supabase 연동
+- 신재욱 : Model, ViewModel, Repository 구현, Supabase 연동
 
 ## 기능
 
@@ -54,7 +54,7 @@ MemberCardApp은 팀과 팀원 정보를 관리할 수 있는 애플리케이션
 - URLSession
 - Compositional Layout
 - Diffable Datasources
-- MVVM + Repository + UseCase + 클로저 기반 데이터 바인딩
+- MVVM + Repository + 클로저 기반 데이터 바인딩
 - Supabase
 - UIImagePickerController
 
@@ -69,13 +69,12 @@ MemberCardApp/
 		- Member.swift // 회원 정보, 회원 정보 업데이트를 위한 구조체 정의
 	- Repository 
 		- MemberRepository.swfit // Supabase CRUD 기능 제공
+		- ImageRepository.swift // Supabase 이미지 업로드 기능 제공
 	- Support/
 		- Key/
 			- ignoreData.swift // Supabase API Key
 		- AppDelegate.swift
 		- SceneDelegate.swift
-	- UseCase/
-		- MemberUseCase.swift // MemberRepositroy에 대한 비즈니스 로직 담당
 	- View/
 		- AddEditView.swift // 사용자가 새로운 항목을 입력하거나 기존 항목을 수정할 UI 제공
 		- AddEditViewController.swift // AddEditView를 관리하고 사용자 입력 처리, 데이터 저장, 업데이트 컨트롤러
@@ -87,7 +86,7 @@ MemberCardApp/
 		- TeamCell.swift // TeamCollectionView 팀 섹션의 셀
 		- TeamCollectionView.swift // 메인화면 레이아웃
 	- ViewModel/
-		- ImagePickerViewModel.swift // 갤러리에서 이미지를 선택하고, Supabase 스토리지에 업로드한 후, 업로드된 이미지의 URL을 반환
+		- ImagePickerViewModel.swift // 이미지 선택과 업로드 기능
 		- MemberViewModel.swift // 회원 데이터에 대한 CRUD와 UI 업데이트를 위한 콜백 호출
 	- info.plist
 ```
