@@ -22,6 +22,7 @@ enum TeamCellConstants {
 
 final class TeamCell: UICollectionViewCell {
     
+    // MARK: - Components
     private let contentLabel: UILabel = {
         let label = UILabel()
         label.text = TeamCellConstants.content
@@ -31,6 +32,7 @@ final class TeamCell: UICollectionViewCell {
         return label
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -42,6 +44,7 @@ final class TeamCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setAddView() {
         addSubview(contentLabel)
     }

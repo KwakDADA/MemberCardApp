@@ -45,8 +45,10 @@ enum MainHeaderTitle {
 
 final class TeamCollectionView: UIView {
     
+    // MARK: - Properties
     var sections: [MainSection]?
 
+    // MARK: - Components
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(TeamCell.self, forCellWithReuseIdentifier: ReuseIdentifier.teamCell)
@@ -57,6 +59,7 @@ final class TeamCollectionView: UIView {
         return collectionView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: .zero)
         
@@ -69,6 +72,7 @@ final class TeamCollectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     private func setAddView() {
         addSubview(collectionView)
     }
