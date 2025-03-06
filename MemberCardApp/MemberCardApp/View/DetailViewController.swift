@@ -16,6 +16,8 @@ final class DetailViewController: UIViewController {
     private lazy var deleteButton = makeButton(title: "삭제")
     private lazy var editButton = makeButton(title: "편집")
     
+    private let imageLoader = ImageLoader()
+    
     // 중앙 이미지 뷰
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -155,7 +157,7 @@ final class DetailViewController: UIViewController {
     }
     
     private func loadImage() {
-        ImageLoader.shared.loadImage(from: member.imageURL) {
+        imageLoader.loadImage(from: member.imageURL) {
             guard let image = $0 else {
                 self.imageView.image = UIImage(systemName: "photo")
                 return
