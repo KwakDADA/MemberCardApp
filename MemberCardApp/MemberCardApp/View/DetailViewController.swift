@@ -10,7 +10,7 @@ import UIKit
 final class DetailViewController: UIViewController {
 
     private var member: Member
-    private let viewModel: MemberViewModel
+    private let viewModel = MemberViewModel()
 
     // 상단 버튼 2개
     private lazy var deleteButton = makeButton(title: "삭제")
@@ -43,9 +43,8 @@ final class DetailViewController: UIViewController {
         return label
     }()
     
-    init(member: Member, viewModel: MemberViewModel) {
+    init(member: Member) {
         self.member = member
-        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         loadImage(into: imageView, from: member.imageURL)
 
@@ -63,15 +62,22 @@ final class DetailViewController: UIViewController {
         setupActionButtons()
     }
     
-    // AddEditViewController에서 편집을 마치고 돌아오면, 새 정보 로드하여 뷰에 반영
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        viewModel.onMembersUpdated = { [weak self] updatedMembers in
+            guard let self = self else { return }
+            if let index = updatedMembers.firstIndex(where: { $0.id == self.member.id }) {
+                self.member = updatedMembers[index]
+                self.memberName.text = self.member.name
+                self.contentText.text = self.member.content
+                self.loadImage(into: self.imageView, from: self.member.imageURL)
+            } else {
+                print("Member not found after update.")
+            }
+        }
+        
         viewModel.fetchMembers()
-        guard let index = viewModel.members.firstIndex(where: { $0.id == member.id }) else { fatalError() }
-        member = viewModel.members[index]
-        memberName.text = member.name
-        contentText.text = member.content
-        loadImage(into: imageView, from: member.imageURL)
     }
  
     
@@ -118,7 +124,7 @@ final class DetailViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
-        self.navigationController?.pushViewController(AddEditViewController(member: member, viewModel: viewModel),animated: true)
+        self.navigationController?.pushViewController(AddEditViewController(member: member),animated: true)
     }
     
     @objc private func deleteButtonTapped() {

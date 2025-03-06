@@ -7,26 +7,40 @@
 
 import Foundation
 
+class MemberStore {
+    static let shared = MemberStore()
+    
+    private init() {}
+    
+    private(set) var members: [Member] = []
+    
+    func updateMembers(_ members: [Member]) {
+        self.members = members
+    }
+}
+
 class MemberViewModel {
     private let repository: MemberRepository
-
-    private(set) var members: [Member] = [] {
-        didSet {
-            onMembersUpdated?(members)
-        }
-    }
+    private let memberStore = MemberStore.shared
+    
+    var members: [Member] {
+         return memberStore.members
+     }
 
     var onMembersUpdated: (([Member]) -> Void)?
 
     init(repository: MemberRepository = MemberRepository()) {
         self.repository = repository
+        fetchMembers()
     }
-
     
     func fetchMembers() {
         Task {
-            self.members = await repository.getMembers()
-            onMembersUpdated?(self.members)
+            let fetchedMembers = await repository.getMembers()
+            await MainActor.run {
+                memberStore.updateMembers(fetchedMembers)
+                onMembersUpdated?(fetchedMembers)
+            }
         }
     }
 
