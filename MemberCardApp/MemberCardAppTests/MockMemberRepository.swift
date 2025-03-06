@@ -8,7 +8,7 @@
 import XCTest
 @testable import MemberCardApp
 
-class MockMemberUseCase: MemberUseCase {
+class MockMemberRepository: MemberRepository {
     
     var mockMembers: [Member] = []
     
