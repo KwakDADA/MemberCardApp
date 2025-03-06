@@ -67,7 +67,7 @@ extension MainViewController: UICollectionViewDelegate {
         // 데이터소스에서 현재 셀에 해당하는 MainItem을 가져오고,
         // 그것이 .member(Member) 타입인지 확인
         guard let item = dataSource?.itemIdentifier(for: indexPath),
-              case let .member(member) = item else { return }
+              let member = item.member else { return }
         
         if isAddMemberCell(indexPath: indexPath) {
             // 멤버 추가 화면으로 이동
