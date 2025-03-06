@@ -132,10 +132,7 @@ final class TeamCollectionView: UIView {
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(100)
         )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 0, leading: 0, bottom: 40, trailing: 0)
@@ -155,10 +152,7 @@ final class TeamCollectionView: UIView {
             widthDimension: .fractionalWidth(0.92),
             heightDimension: .absolute(400)
         )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 20, leading: 0, bottom: 40, trailing: 0)
