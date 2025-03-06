@@ -77,14 +77,10 @@ final class DetailViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         
-        // 버튼 스택 뷰(내비게이션 바 버튼)
-        let buttonStackView = UIStackView(arrangedSubviews: [deleteButton, editButton])
-        buttonStackView.axis = .horizontal
-        buttonStackView.alignment = .trailing
-        buttonStackView.spacing = 8
-        
-        let stackBarButtonItem = UIBarButtonItem(customView: buttonStackView)
-        navigationItem.rightBarButtonItem = stackBarButtonItem
+        // 내비게이션 바 버튼(삭제, 편집)
+        let button1 = UIBarButtonItem(customView: deleteButton)
+        let button2 = UIBarButtonItem(customView: editButton)
+        navigationItem.rightBarButtonItems = [button1, button2]
         
         // 화면 전체 스택 뷰
         let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, memberName, contentLabel, contentText])
@@ -122,14 +118,25 @@ final class DetailViewController: UIViewController {
     }
     
     @objc private func deleteButtonTapped() {
-        viewModel.deleteMember(id: member.id)
-        navigationController?.popViewController(animated: true)
+        let alertController = UIAlertController(title: "소중한 멤버를 정말로 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alertController.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            viewModel.deleteMember(id: member.id)
+            navigationController?.popViewController(animated: true)
+        })
+        
+        present(alertController, animated: true)
     }
     
     // MARK: - 헬퍼 메서드
     private func makeButton(title: String) -> UIButton {
         let button = UIButton(configuration: .tinted())
         button.setTitle(title, for: .normal)
+        if title == "삭제" {
+            button.tintColor = .red
+        }
         return button
     }
     
