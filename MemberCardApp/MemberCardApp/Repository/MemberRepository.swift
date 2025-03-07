@@ -17,7 +17,8 @@ class MemberRepository {
                 .select()
                 .execute()
                 .value
-            print("유저 목록: \(users)")
+//            print("유저 목록: \(users)")
+            print("getMembers clear")
             return users
         } catch {
             print("데이터 가져오기 실패: \(error)")
