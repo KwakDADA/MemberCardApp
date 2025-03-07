@@ -31,21 +31,23 @@ class MemberViewModel {
     
     init(repository: MemberRepository = MemberRepository()) {
         self.repository = repository
-        fetchMembers()
+        // 초기 fetchMembers 호출은 필요에 따라 변경
+        Task {
+            await fetchMembers()
+        }
     }
     
-    func fetchMembers() {
-        Task {
-            let fetchedMembers = await repository.getMembers()
-            memberStore.updateMembers(fetchedMembers)
-            onMembersUpdated?(fetchedMembers)
-        }
+    // async로 선언하여 호출한 쪽에서 기다릴 수 있도록 함
+    func fetchMembers() async {
+        let fetchedMembers = await repository.getMembers()
+        memberStore.updateMembers(fetchedMembers)
+        onMembersUpdated?(fetchedMembers)
     }
     
     func addMember(name: String, imageURL: String, content: String) {
         Task {
             await repository.addMember(name: name, imageURL: imageURL, content: content)
-            fetchMembers()
+            await fetchMembers()
         }
     }
     
@@ -53,14 +55,14 @@ class MemberViewModel {
         Task {
             let updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
             await repository.updateMember(id: id, data: updateData)
-            fetchMembers()
+            await fetchMembers()
         }
     }
     
     func deleteMember(id: UUID) {
         Task {
             await repository.deleteMember(id: id)
-            fetchMembers()
+            await fetchMembers()
         }
     }
 }
