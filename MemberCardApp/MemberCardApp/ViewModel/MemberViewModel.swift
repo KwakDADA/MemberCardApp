@@ -24,11 +24,11 @@ class MemberViewModel {
     private let memberStore = MemberStore.shared
     
     var members: [Member] {
-         return memberStore.members
-     }
-
+        return memberStore.members
+    }
+    
     var onMembersUpdated: (([Member]) -> Void)?
-
+    
     init(repository: MemberRepository = MemberRepository()) {
         self.repository = repository
         fetchMembers()
@@ -37,20 +37,18 @@ class MemberViewModel {
     func fetchMembers() {
         Task {
             let fetchedMembers = await repository.getMembers()
-            await MainActor.run {
-                memberStore.updateMembers(fetchedMembers)
-                onMembersUpdated?(fetchedMembers)
-            }
+            memberStore.updateMembers(fetchedMembers)
+            onMembersUpdated?(fetchedMembers)
         }
     }
-
+    
     func addMember(name: String, imageURL: String, content: String) {
         Task {
             await repository.addMember(name: name, imageURL: imageURL, content: content)
             fetchMembers()
         }
     }
-
+    
     func updateMember(id: UUID, name: String?, imageURL: String?, content: String?) {
         Task {
             let updateData = UpdateMemberData(name: name, imageURL: imageURL, content: content)
@@ -58,7 +56,7 @@ class MemberViewModel {
             fetchMembers()
         }
     }
-
+    
     func deleteMember(id: UUID) {
         Task {
             await repository.deleteMember(id: id)
