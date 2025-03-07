@@ -50,11 +50,8 @@ final class MainViewController: UIViewController {
     // 뷰모델의 멤버 데이터가 갱신되면 컬렉션뷰 스냅샷 업데이트
     private func bindViewModel() {
         viewModel.onMembersUpdated = { [weak self] members in
-            print("onMembersUpdated in MainVC")
             DispatchQueue.main.async {
                 self?.updateSnapshot(with: members)
-                print("스냅샷 업데이트 완료")
-                print(members.map { $0.name })
             }
         }
     }
