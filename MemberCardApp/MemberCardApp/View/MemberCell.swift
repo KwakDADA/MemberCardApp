@@ -25,7 +25,8 @@ final class MemberCell: UICollectionViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .white
+        label.font = .preferredFont(forTextStyle: .title2)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -33,7 +34,7 @@ final class MemberCell: UICollectionViewCell {
     private let contentLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.textColor = .black
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -42,6 +43,7 @@ final class MemberCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setGradientLayer()
         setAddView()
         setConstraint()
     }
@@ -79,6 +81,21 @@ final class MemberCell: UICollectionViewCell {
             contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             contentLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
         ])
+    }
+    
+    private func setGradientLayer() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = layer.bounds
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.3)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        
+        let colors: [CGColor] = [
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.8).cgColor
+        ]
+        gradientLayer.colors = colors
+        
+        profileImageView.layer.addSublayer(gradientLayer)
     }
     
     func configureCell(withMember member: Member) {
