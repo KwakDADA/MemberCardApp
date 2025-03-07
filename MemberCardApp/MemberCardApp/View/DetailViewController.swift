@@ -7,6 +7,10 @@
 
 import UIKit
 
+struct NotificationName {
+    static let editDone = Notification.Name("editDone")
+}
+
 final class DetailViewController: UIViewController {
 
     private var member: Member
@@ -66,14 +70,19 @@ final class DetailViewController: UIViewController {
     // AddEditViewController에서 편집을 마치고 돌아오면, 새 정보 로드하여 뷰에 반영
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        viewModel.fetchMembers()
-        guard let index = viewModel.members.firstIndex(where: { $0.id == member.id }) else { fatalError() }
-        member = viewModel.members[index]
-        memberName.text = member.name
-        contentText.text = member.content
-        loadImage(into: imageView, from: member.imageURL)
+        
+        // 편집된 데이터를 직접 전달받아 우선 뷰에 반영
+        NotificationCenter.default.addObserver(self, selector: #selector(editedMemberDataReceived(_:)), name: NotificationName.editDone, object: nil)
     }
- 
+    
+    @objc func editedMemberDataReceived(_ notification: Notification) {
+        if let editedMember = notification.object as? Member {
+            member = editedMember
+            memberName.text = member.name
+            contentText.text = member.content
+            loadImage(into: imageView, from: member.imageURL)
+        }
+    }
     
     private func setupUI() {
         // 스크롤 뷰
